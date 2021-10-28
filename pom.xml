@@ -176,6 +176,18 @@
       <artifactId>webdriverextensions</artifactId>
       <version>3.11.2</version>
     </dependency>
+
+    <!-- Jackson Databind -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.6.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20200518</version>
+    </dependency>
   </dependencies>
 
   <repositories>

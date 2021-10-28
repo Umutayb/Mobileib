@@ -49,7 +49,7 @@ public class JsonUtilities {
         JsonParser jsonParser = new JsonParser();
         JsonElement object;
 
-        FileReader fileReader = new FileReader(directory+"/"+JsonName+".JSON");
+        FileReader fileReader = new FileReader(directory+"/"+JsonName+".json");
 
         object = jsonParser.parse(fileReader);
         JsonObject jsonObject = (JsonObject) object;
@@ -60,19 +60,22 @@ public class JsonUtilities {
 
     }
 
-    public JSONObject parseJSONFile(String JsonName) throws IOException, ParseException {
+    public JSONObject parseJSONFile(String directory, String JsonName){
 
-        JSONParser jsonParser = new JSONParser();
-        JSONObject object;
+        try {
+            JSONParser jsonParser = new JSONParser();
+            JSONObject object;
 
-        FileReader fileReader = new FileReader("src/test/java/resources/database/"+JsonName+".JSON");
+            FileReader fileReader = new FileReader(directory+"/"+JsonName+".json");
 
-        object = (JSONObject) jsonParser.parse(fileReader);
-        JSONObject jsonObject = object;
+            object = (JSONObject) jsonParser.parse(fileReader);
+            JSONObject jsonObject = object;
 
-        assert jsonObject != null;
+            assert jsonObject != null;
 
-        return jsonObject;
+            return jsonObject;
+        }
+        catch (IOException | ParseException ignored) {return null;}
 
     }
 
