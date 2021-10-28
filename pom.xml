@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.Umutayb</groupId>
-  <artifactId>Pickleib</artifactId>
-  <version>0.5.3</version>
+  <artifactId>Mobileib</artifactId>
+  <version>0.0.1</version>
   <packaging>jar</packaging>
 
-  <name>Pickleib</name>
-  <url>http://github.com/Umutayb/Pickleib</url>
+  <name>Mobileib</name>
+  <url>http://github.com/Umutayb/Mobileib</url>
 
   <properties>
     <buildDirectory>${project.basedir}/out/artifacts/POM-Framework_jar</buildDirectory>
