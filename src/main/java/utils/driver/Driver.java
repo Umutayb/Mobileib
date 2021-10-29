@@ -28,6 +28,8 @@ public class Driver extends WebComponent {
 	public void initialize() {
 		log.new info("Initializing driver");
 		String device = reader.getProperty("device");
+		if (device==null)
+			device = properties.getProperty("device");
 
 		try {properties.load(new FileReader("src/test/resources/test.properties"));}
 		catch (IOException e) {log.new warning(e.getMessage());}
