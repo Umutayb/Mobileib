@@ -6,7 +6,7 @@
 
   <groupId>com.github.Umutayb</groupId>
   <artifactId>Mobileib</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
   <packaging>jar</packaging>
 
   <name>Mobileib</name>
@@ -52,12 +52,6 @@
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-java</artifactId>
-      <version>${cucumber.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-jvm</artifactId>
       <version>${cucumber.version}</version>
       <type>pom</type>
@@ -65,11 +59,6 @@
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-core</artifactId>
-      <version>${cucumber.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-testng</artifactId>
       <version>${cucumber.version}</version>
     </dependency>
     <dependency>
@@ -202,12 +191,7 @@
       <artifactId>json</artifactId>
       <version>20210307</version>
     </dependency>
-    <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-junit</artifactId>
-      <version>7.0.0</version>
-      <scope>compile</scope>
-    </dependency>
+
   </dependencies>
 
   <repositories>
