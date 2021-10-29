@@ -6,7 +6,7 @@
 
   <groupId>com.github.Umutayb</groupId>
   <artifactId>Mobileib</artifactId>
-  <version>0.0.41</version>
+  <version>0.1.1</version>
   <packaging>jar</packaging>
 
   <name>Mobileib</name>
