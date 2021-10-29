@@ -20,12 +20,13 @@ public class Capabilities {
     public String takesScreenshot;
     public String rotatable;
     public String orientation;
-    public String noReset;
     public String locale;
     public String applicationName;
     public String appPath;
     public String language;
     public String avdName;
+    public String noReset;
+    public String reset;
 
     public Capabilities(){}
 

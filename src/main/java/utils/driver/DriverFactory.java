@@ -72,24 +72,24 @@ public class DriverFactory {
 
             log.new info("Setting " + key + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
 
-            switch (key.toLowerCase()){
-                case "device name":
+            switch (key){
+                case "deviceName":
                     desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "avd name":
+                case "avdName":
                     desiredCapabilities.setCapability(AndroidMobileCapabilityType.AVD, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "automation name":
+                case "automationName":
                     desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "platform version":
+                case "platformVersion":
                     desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "platform name":
+                case "platformName":
                     desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, capabilities.getConfig(capabilities).get(key));
                     break;
 
@@ -101,7 +101,7 @@ public class DriverFactory {
                     desiredCapabilities.setCapability(MobileCapabilityType.APP, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "application name":
+                case "applicationName":
                     desiredCapabilities.setCapability(MobileCapabilityType.APPLICATION_NAME, capabilities.getConfig(capabilities).get(key));
                     break;
 
@@ -109,11 +109,11 @@ public class DriverFactory {
                     desiredCapabilities.setCapability(MobileCapabilityType.LOCALE, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "":
+                case "reset":
                     desiredCapabilities.setCapability(MobileCapabilityType.FULL_RESET, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "no reset":
+                case "noReset":
                     desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET, capabilities.getConfig(capabilities).get(key));
                     break;
 
@@ -125,23 +125,23 @@ public class DriverFactory {
                     desiredCapabilities.setCapability(MobileCapabilityType.ROTATABLE, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "takes screenshot":
+                case "takesScreenshot":
                     desiredCapabilities.setCapability(MobileCapabilityType.TAKES_SCREENSHOT, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "udid":
+                case "UDID":
                     desiredCapabilities.setCapability(MobileCapabilityType.UDID, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "unexpected alert behaviour":
+                case "unexpectedAlertBehaviour":
                     desiredCapabilities.setCapability(MobileCapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "app package":
+                case "appPackage":
                     desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, capabilities.getConfig(capabilities).get(key));
                     break;
 
-                case "app activity":
+                case "appActivity":
                     desiredCapabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, capabilities.getConfig(capabilities).get(key));
                     break;
 
