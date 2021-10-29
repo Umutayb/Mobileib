@@ -4,21 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.webdriverextensions.WebComponent;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import io.cucumber.java.*;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import io.cucumber.core.api.Scenario;
 import resources.Capabilities;
 import utils.Printer;
 import utils.PropertiesReader;
 import utils.StringUtilities;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Properties;
 
 public class Driver extends WebComponent {
 
 	public static AppiumDriver<MobileElement> driver;
-	public static WebDriverWait wait;
 
 	PropertiesReader reader = new PropertiesReader("properties-from-pom.properties");
 	StringUtilities strUtils = new StringUtilities();
@@ -42,7 +39,6 @@ public class Driver extends WebComponent {
 		}
 		catch (IOException e) {log.new warning(e.getMessage());}
 		assert driver != null;
-		wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 	}
 
 	public void terminate(Scenario scenario){

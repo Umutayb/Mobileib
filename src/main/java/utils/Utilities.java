@@ -380,17 +380,6 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
         }
     }
 
-    public MobileElement waitUntilElementIsInvisible(MobileElement element, long startTime) {
-        if ((System.currentTimeMillis() - startTime) > 15000)
-            return element;
-        try {
-            wait.until(ExpectedConditions.invisibilityOf(element));
-            return null;
-        } catch (TimeoutException e) {
-            return waitUntilElementIsInvisible(element, startTime);
-        }
-    }
-
     public MobileElement waitUntilElementIsClickable(MobileElement element, long initialTime){
         driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
         if (System.currentTimeMillis()-initialTime>15000){

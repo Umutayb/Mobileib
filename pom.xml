@@ -6,7 +6,7 @@
 
   <groupId>com.github.Umutayb</groupId>
   <artifactId>Mobileib</artifactId>
-  <version>0.2.2</version>
+  <version>0.3.1</version>
   <packaging>jar</packaging>
 
   <name>Mobileib</name>
@@ -21,7 +21,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <serenity.version>1.9.12</serenity.version>
-    <cucumber.version>7.0.0</cucumber.version>
+    <cucumber.version>4.8.0</cucumber.version>
   </properties>
 
   <dependencies>
@@ -31,11 +31,6 @@
       <artifactId>cucumber-java</artifactId>
       <version>${cucumber.version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>datatable-dependencies</artifactId>
-      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
@@ -51,15 +46,53 @@
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
-      <artifactId>gherkin</artifactId>
-      <version>22.0.0</version>
-      <scope>test</scope>
+      <artifactId>datatable</artifactId>
+      <version>7.0.0</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
-      <artifactId>datatable</artifactId>
+      <artifactId>cucumber-java</artifactId>
       <version>${cucumber.version}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-jvm</artifactId>
+      <version>${cucumber.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-core</artifactId>
+      <version>${cucumber.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-testng</artifactId>
+      <version>${cucumber.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-picocontainer</artifactId>
+      <version>7.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.masterthought</groupId>
+      <artifactId>cucumber-reporting</artifactId>
+      <version>5.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>datatable-dependencies</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>gherkin</artifactId>
+      <version>5.1.0</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- Selenium -->
@@ -171,7 +204,7 @@
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-java</artifactId>
+      <artifactId>cucumber-junit</artifactId>
       <version>7.0.0</version>
       <scope>compile</scope>
     </dependency>

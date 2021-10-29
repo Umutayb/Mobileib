@@ -32,7 +32,7 @@ mvn clean package -DbuildDirectory=directory/to/project/lib
 ```
 For instance:
 ```
-mvn clean package -DbuildDirectory=/Users/Umut/Github/Web-Automation-Sample-Cucumber/lib
+mvn clean package -DbuildDirectory=/Users/Ay/Github/Mobile-Automation-Sample/lib
 ```
 There, the imported jar file should be added as a dependency in pom.xml file of that project:
 ```

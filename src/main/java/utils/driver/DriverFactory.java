@@ -13,8 +13,9 @@ import utils.Printer;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.time.Duration;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
 import static resources.Colors.*;
 
 public class DriverFactory {
@@ -32,8 +33,7 @@ public class DriverFactory {
                     driver = new IOSDriver<>(new URL("http:/127.0.0.1:4723/wd/hub"), desiredCapabilities);
                     break;
             }
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
-            driver.manage().window().maximize();
+            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
             log.new important(deviceName+GRAY+" was selected");
             return driver;
         }
@@ -59,7 +59,7 @@ public class DriverFactory {
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
-            log.new info("Setting " + key + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
+            log.new info("Setting "+PURPLE + key + GRAY + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
 
             switch (key){
                 case "deviceName":
