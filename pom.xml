@@ -6,7 +6,7 @@
 
   <groupId>com.github.Umutayb</groupId>
   <artifactId>Mobileib</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
   <packaging>jar</packaging>
 
   <name>Mobileib</name>
@@ -177,16 +177,11 @@
       <version>3.11.2</version>
     </dependency>
 
-    <!-- Jackson Databind -->
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.6.3</version>
-    </dependency>
+    <!-- Json-->
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20200518</version>
+      <version>20210307</version>
     </dependency>
   </dependencies>
 
