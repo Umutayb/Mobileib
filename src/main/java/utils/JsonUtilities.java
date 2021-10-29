@@ -46,12 +46,11 @@ public class JsonUtilities {
 
     public JsonObject parseJsonFile(String directory, String JsonName) throws FileNotFoundException {
 
-        JsonParser jsonParser = new JsonParser();
         JsonElement object;
 
         FileReader fileReader = new FileReader(directory+"/"+JsonName+".json");
 
-        object = jsonParser.parse(fileReader);
+        object = JsonParser.parseReader(fileReader);
         JsonObject jsonObject = (JsonObject) object;
 
         assert jsonObject != null;
