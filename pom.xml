@@ -6,7 +6,7 @@
 
   <groupId>com.github.Umutayb</groupId>
   <artifactId>Mobileib</artifactId>
-  <version>0.1.8</version>
+  <version>0.1.9</version>
   <packaging>jar</packaging>
 
   <name>Mobileib</name>
@@ -58,13 +58,8 @@
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>datatable</artifactId>
-      <version>7.0.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.cucumber</groupId>
-      <artifactId>cucumber-core</artifactId>
       <version>${cucumber.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <!-- Selenium -->
@@ -173,6 +168,12 @@
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>20210307</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>7.0.0</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 

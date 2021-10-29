@@ -11,13 +11,12 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import resources.Capabilities;
 import utils.Printer;
 import utils.StringUtilities;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Properties;
 import static resources.Colors.*;
-import java.util.concurrent.TimeUnit;
 
 public class DriverFactory {
 
@@ -42,7 +41,7 @@ public class DriverFactory {
                     driver = new IOSDriver<>(new URL("http:/127.0.0.1:4723/wd/hub"), desiredCapabilities);
                     break;
             }
-            driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
             driver.manage().window().maximize();
             log.new important(driverName+GRAY+" was selected");
 
@@ -71,7 +70,7 @@ public class DriverFactory {
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
-            System.out.println(GRAY + "Setting " + key + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
+            log.new info("Setting " + key + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
 
             switch (key.toLowerCase()){
                 case "device name":

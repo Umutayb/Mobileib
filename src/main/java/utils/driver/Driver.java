@@ -1,11 +1,10 @@
 package utils.driver;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.webdriverextensions.WebComponent;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import io.cucumber.messages.types.TestStepResult;
+import io.cucumber.java.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import resources.Capabilities;
 import utils.Printer;
@@ -15,8 +14,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Properties;
-
-import static io.cucumber.messages.types.TestStepResult.Status.FAILED;
 
 public class Driver extends WebComponent {
 
@@ -48,10 +45,10 @@ public class Driver extends WebComponent {
 		wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 	}
 
-	public void terminate(TestStepResult stepResult){
+	public void terminate(Scenario scenario){
 		log.new info("Finalizing driver...");
-		if (stepResult.getStatus().equals(FAILED))
-			log.captureScreen(stepResult.getClass().getName()+"@"+stepResult.getMessage(),driver);
+		if (scenario.isFailed())
+			log.captureScreen(scenario.getName()+"@"+scenario.getLine(),driver);
 		driver.quit();
 	}
 }
