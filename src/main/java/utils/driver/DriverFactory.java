@@ -10,7 +10,6 @@ import org.junit.Assert;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import resources.Capabilities;
 import utils.Printer;
-import utils.StringUtilities;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -21,32 +20,22 @@ import static resources.Colors.*;
 public class DriverFactory {
 
     static Printer log = new Printer(DriverFactory.class);
-    static Properties properties = new Properties();
 
-    public static AppiumDriver<MobileElement> getDriver(String driverName, AppiumDriver<MobileElement> driver, Capabilities capabilities){
-        StringUtilities strUtils = new StringUtilities();
+    public static AppiumDriver<MobileElement> getDriver(String deviceName, AppiumDriver<MobileElement> driver, Capabilities capabilities){
         DesiredCapabilities desiredCapabilities = getConfig(capabilities);
         try {
-            properties.load(new FileReader("src/test/resources/test.properties"));
-
-            if (driverName == null)
-                driverName = strUtils.firstLetterCapped(properties.getProperty("device"));
-
-            switch (driverName.toLowerCase()){
+            switch (capabilities.platformName.toLowerCase()){
                 case "android":
                     driver = new AndroidDriver<>(new URL("http:/127.0.0.1:4723/wd/hub"), desiredCapabilities);
                     break;
-
                 case "ios":
                     driver = new IOSDriver<>(new URL("http:/127.0.0.1:4723/wd/hub"), desiredCapabilities);
                     break;
             }
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
             driver.manage().window().maximize();
-            log.new important(driverName+GRAY+" was selected");
-
+            log.new important(deviceName+GRAY+" was selected");
             return driver;
-
         }
         catch (Exception gamma) {
             if(gamma.toString().contains("Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure")){
@@ -62,7 +51,7 @@ public class DriverFactory {
     }
 
     public static DesiredCapabilities getConfig(Capabilities capabilities) {
-
+        Properties properties = new Properties();
         try {properties.load(new FileReader("src/test/resources/test.properties"));}
         catch (IOException e) {e.printStackTrace();}
 
