@@ -29,13 +29,12 @@ public class Driver extends WebComponent {
 		log.new info("Initializing driver");
 		String device = reader.getProperty("device");
 
-		try {
-			if (device==null)
-				device = properties.getProperty("device");
-			properties.load(new FileReader("src/test/resources/test.properties"));
-		}
+		try {properties.load(new FileReader("src/test/resources/test.properties"));}
 		catch (IOException e) {log.new warning(e.getMessage());}
 		String directory = properties.getProperty("config");//src/test/resources/configurations
+		if (device==null)
+			device = properties.getProperty("device");
+
 
 		assert directory != null;
 		try(FileReader file = new FileReader(directory+"/"+device+".json")) {
