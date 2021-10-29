@@ -68,7 +68,6 @@ public class DriverFactory {
         catch (IOException e) {e.printStackTrace();}
 
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        File appSourceFile = new File(properties.getProperty("app.directory"));
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
@@ -100,11 +99,6 @@ public class DriverFactory {
                     break;
 
                 case "app":
-                    File appDestination = new File(appSourceFile, capabilities.getConfig(capabilities).get(key));
-                    desiredCapabilities.setCapability(MobileCapabilityType.APP, appDestination.getAbsolutePath());
-                    break;
-
-                case "custom app path":
                     desiredCapabilities.setCapability(MobileCapabilityType.APP, capabilities.getConfig(capabilities).get(key));
                     break;
 
