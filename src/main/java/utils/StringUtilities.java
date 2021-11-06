@@ -16,6 +16,8 @@ public class StringUtilities {   //Utility methods
         return reversed.toString();
     }
 
+    public String reversed(String input){return new StringBuilder(input).reverse().toString();}
+
     public String firstLetterCapped(String inputString){ //Capitalizes the first letter of the input string
 
         if (inputString!=null){

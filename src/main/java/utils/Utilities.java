@@ -1,12 +1,17 @@
 package utils;
 
-import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
-import io.appium.java_client.MobileBy;
-import io.appium.java_client.MobileElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.touch.TouchActions;
 import org.openqa.selenium.support.PageFactory;
+import io.appium.java_client.MobileElement;
 import com.gargoylesoftware.htmlunit.*;
+import io.appium.java_client.MobileBy;
+
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import org.json.simple.JSONObject;
 import static resources.Colors.*;
@@ -17,7 +22,7 @@ import java.util.List;
 
 public abstract class Utilities extends Driver { //TODO: Write a method which creates a unique css selector for elements
 
-    public Utilities(){PageFactory.initElements(new WebDriverExtensionFieldDecorator(driver), this);}
+    public Utilities(){PageFactory.initElements(new AppiumFieldDecorator(driver), this);}
 
     Printer log = new Printer(Utilities.class);
 
@@ -73,13 +78,8 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
 
     //This method clicks an element after waiting it and scrolling it to the center of the view
     public void clickElement(MobileElement element){
-        try {
-
-            centerElement(waitUntilElementIsClickable(element, System.currentTimeMillis())).click();
-
-        }catch (ElementNotFoundException e){
-            Assert.fail(GRAY+e.getMessage()+RESET);
-        }
+        try {centerElement(waitUntilElementIsClickable(element, System.currentTimeMillis())).click();}
+        catch (ElementNotFoundException e){Assert.fail(GRAY+e.getMessage()+RESET);}
     }
 
     //This method is for filling an input field, it waits for the element, scrolls to it, clears it and then fills it
@@ -137,7 +137,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
     public MobileElement getElementWithText(String elementText){
         try {
 
-            return driver.findElement(MobileBy.xpath("//*[text()='" +elementText+ "']"));
+            return (MobileElement) driver.findElement(MobileBy.xpath("//*[text()='" +elementText+ "']"));
 
         }catch (ElementNotFoundException e){
             Assert.fail(GRAY+e.getMessage()+RESET);
@@ -217,17 +217,129 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
         }
     }
 
+    public void swipe(Point pointOfDeparture, Point pointOfArrival){
+        try {
+            new TouchAction<>(driver)
+                    .moveTo(PointOption.point(pointOfDeparture))
+                    .press(PointOption.point(pointOfDeparture))
+                    .waitAction(WaitOptions.waitOptions(Duration.ofMillis(300)))
+                    .moveTo(PointOption.point(pointOfArrival))
+                    .release()
+                    .perform();
+            waitFor(0.5);
+        }
+        catch (InvalidElementStateException ignored){}
+    }
+
     //This method scrolls an element to the center of the view
     public MobileElement centerElement(MobileElement element){
 
-        String scrollScript = "var viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);"
-                + "var elementTop = arguments[0].getBoundingClientRect().top;"
-                + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
+        Point center = new Point(
+                driver.manage().window().getSize().getWidth()/2,
+                driver.manage().window().getSize().getHeight()/2);
 
-        ((JavascriptExecutor) driver).executeScript(scrollScript, element);
+        int verticalScrollDist = element.getLocation().getY() - driver.manage().window().getSize().getHeight()/2;
+        int verticalScrollStep = driver.manage().window().getSize().getHeight()/3;
 
+        int horizontalScrollDist = element.getLocation().getX() - driver.manage().window().getSize().getWidth()/2;
+        int horizontalScrollStep = driver.manage().window().getSize().getWidth()/3;
+        for (int i = 0; i <= verticalScrollDist / verticalScrollStep; i++) {
+            if (i == verticalScrollDist / verticalScrollStep){
+                swipeFromCenter(new Point(
+                        center.getX() + horizontalScrollDist % horizontalScrollStep,
+                        center.getY() + verticalScrollDist % verticalScrollStep));
+            }
+            else{
+                swipeFromCenter(new Point(
+                        center.getX() + horizontalScrollStep,
+                        center.getY() + verticalScrollStep));
+            }
+        }
+
+        return element;
+    }
+
+    public void swiper(String direction){
+        Point center = new Point(
+                driver.manage().window().getSize().getWidth()/2,
+                driver.manage().window().getSize().getHeight()/2);
+
+        Point destination;
+        switch (direction.toLowerCase()){
+            case "up":
+                destination = new Point(
+                        center.getX(),
+                        center.getY() + driver.manage().window().getSize().getHeight()/3);
+                break;
+
+            case "down":
+                destination = new Point(
+                        center.getX(),
+                        center.getY() - driver.manage().window().getSize().getHeight()/3);
+                break;
+
+            case "left":
+                destination = new Point(
+                        center.getX()-driver.manage().window().getSize().getWidth()/3,
+                        center.getY());
+                break;
+
+            case "right":
+                destination = new Point(
+                        center.getX()+driver.manage().window().getSize().getWidth()/3,
+                        center.getY());
+                break;
+
+            default:
+                destination = null;
+                Assert.fail(YELLOW+"No such swipe direction was defined in horizontal swipe.");
+        }
+
+        swipe(center,destination);
+    }
+
+    public void swipeFromCenter(Point point){
+        Point center = new Point(
+                driver.manage().window().getSize().getWidth()/2,
+                driver.manage().window().getSize().getHeight()/2);
+        swipe(center,point);
+    }
+
+    public MobileElement swipeElement(MobileElement element,Point point){
+        new TouchAction<>(driver)
+                .moveTo(PointOption.point(element.getLocation()))
+                .press(PointOption.point(element.getLocation()))
+                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(300)))
+                .moveTo(PointOption.point(point))
+                .release()
+                .perform();
         waitFor(0.5);
+        return element;
+    }
 
+    public MobileElement swipeWithOffset(MobileElement element, Integer xOffset, Integer yOffset){
+        TouchActions action = new TouchActions(driver);
+        action
+                .moveToElement(element)
+                .clickAndHold(element)
+                .moveToElement(element,xOffset,yOffset)
+                .release()
+                .build()
+                .perform();
+        waitFor(0.5);
+        return element;
+    }
+
+    public MobileElement swipeFromTo(MobileElement element, WebElement destinationElement){
+        TouchActions action = new TouchActions(driver);
+        action
+                .moveToElement(element)
+                .clickAndHold(element)
+                .moveToElement(destinationElement)
+                .release()
+                .build()
+                .perform();
+        waitFor(0.5);
         return element;
     }
 

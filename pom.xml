@@ -6,7 +6,7 @@
 
   <groupId>com.github.Umutayb</groupId>
   <artifactId>Mobileib</artifactId>
-  <version>0.3.4</version>
+  <version>0.3.5</version>
   <packaging>jar</packaging>
 
   <name>Mobileib</name>
@@ -66,18 +66,6 @@
       <artifactId>cucumber-core</artifactId>
       <version>4.8.0</version>
       <scope>compile</scope>
-    </dependency>
-
-    <!-- Selenium -->
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>htmlunit-driver</artifactId>
-      <version>2.20</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-api</artifactId>
-      <version>3.141.59</version>
     </dependency>
 
     <!-- Appium -->
