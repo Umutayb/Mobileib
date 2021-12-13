@@ -89,12 +89,18 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
             clearInputField(centerElement(waitUntilElementIsVisible(inputElement, System.currentTimeMillis()))).sendKeys(inputText);
 
             if (verify)
-                Assert.assertEquals(inputElement.getAttribute("value"), inputText);
-
-        }catch (ElementNotFoundException e){
-            Assert.fail(GRAY+e.getMessage()+RESET);
+                Assert.assertEquals(inputElement.getText(), inputText);
         }
+        catch (ElementNotFoundException e){Assert.fail(GRAY+e.getMessage()+RESET);}
+    }
 
+    //This method is for filling an input field, it waits for the element, scrolls to it, clears it and then fills it
+    public void fillInput(MobileElement inputElement, String inputText){
+        try {
+            // This method clears the input field before filling it
+            centerElement(waitUntilElementIsVisible(inputElement, System.currentTimeMillis())).sendKeys(inputText);
+        }
+        catch (ElementNotFoundException e){Assert.fail(GRAY+e.getMessage()+RESET);}
     }
 
     public void hoverOver(MobileElement element, long startTime){
@@ -126,7 +132,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
 
     //This method clears an input field /w style
     public MobileElement clearInputField(MobileElement element){
-        int textLength = element.getAttribute("text").length();
+        int textLength = element.getText().length();
         for(int i = 0; i < textLength; i++){
             element.sendKeys(Keys.BACK_SPACE);
         }
