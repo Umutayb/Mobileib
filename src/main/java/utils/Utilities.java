@@ -126,7 +126,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
 
     //This method clears an input field /w style
     public MobileElement clearInputField(MobileElement element){
-        int textLength = element.getAttribute("value").length();
+        int textLength = element.getAttribute("text").length();
         for(int i = 0; i < textLength; i++){
             element.sendKeys(Keys.BACK_SPACE);
         }
