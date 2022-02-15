@@ -9,6 +9,7 @@ import resources.Capabilities;
 import utils.Printer;
 import utils.PropertiesReader;
 import utils.StringUtilities;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -23,11 +24,11 @@ public class Driver extends WebComponent {
 	Printer log = new Printer(Driver.class);
 
 	public void initialize() {
-		log.new info("Initializing driver");
+		log.new Info("Initializing driver");
 		String device = reader.getProperty("device");
 
 		try {properties.load(new FileReader("src/test/resources/test.properties"));}
-		catch (IOException e) {log.new warning(e.getMessage());}
+		catch (IOException e) {log.new Warning(e.getMessage());}
 		String directory = properties.getProperty("config");//src/test/resources/configurations
 		if (device==null)
 			device = properties.getProperty("device");
@@ -37,12 +38,12 @@ public class Driver extends WebComponent {
 			Capabilities capabilities = new ObjectMapper().readValue(file, Capabilities.class);
 			driver = DriverFactory.getDriver(strUtils.firstLetterCapped(device), driver, capabilities);
 		}
-		catch (IOException e) {log.new warning(e.getMessage());}
+		catch (IOException e) {log.new Warning(e.getMessage());}
 		assert driver != null;
 	}
 
 	public void terminate(Scenario scenario){
-		log.new info("Finalizing driver...");
+		log.new Info("Finalizing driver...");
 		if (scenario.isFailed())
 			log.captureScreen(scenario.getName()+"@"+scenario.getLine(),driver);
 		driver.quit();

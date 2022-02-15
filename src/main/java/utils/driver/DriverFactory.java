@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import resources.Capabilities;
 import utils.Printer;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -34,12 +35,12 @@ public class DriverFactory {
                     break;
             }
             driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-            log.new important(deviceName+GRAY+" was selected");
+            log.new Important(deviceName+GRAY+" was selected");
             return driver;
         }
         catch (Exception gamma) {
             if(gamma.toString().contains("Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure")){
-                log.new info("Please make sure the "+PURPLE+"Selenium Grid "+GRAY+"is on & verify the port that its running on at 'resources/test.properties'."+RESET);
+                log.new Info("Please make sure the "+PURPLE+"Selenium Grid "+GRAY+"is on & verify the port that its running on at 'resources/test.properties'."+RESET);
                 Assert.fail(YELLOW+gamma+RESET);
             }
             else {
@@ -59,7 +60,7 @@ public class DriverFactory {
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
-            log.new info("Setting "+PURPLE + key + GRAY + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
+            log.new Info("Setting "+PURPLE + key + GRAY + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
 
             switch (key){
                 case "deviceName":
