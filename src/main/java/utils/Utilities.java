@@ -34,7 +34,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
     public String navigate(String url){
         try {
 
-            log.new info("Navigating to "+RESET+BLUE+url);
+            log.new Info("Navigating to "+RESET+BLUE+url);
 
             if (!url.contains("http"))
                 url = "https://"+url;
@@ -53,7 +53,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
     public void navigateBrowser(String direction){
         try {
 
-            log.new info("Navigating "+direction);
+            log.new Info("Navigating "+direction);
 
             switch (direction.toLowerCase()){
                 case "forward":
@@ -214,7 +214,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
     //This method makes the thread wait for a certain while
     public void waitFor(double seconds){
         if (seconds > 1)
-            log.new info("Waiting for "+BLUE+seconds+GRAY+" seconds");
+            log.new Info("Waiting for "+BLUE+seconds+GRAY+" seconds");
         try {
             Thread.sleep((long) (seconds* 1000L));
         }
@@ -371,7 +371,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
     public void printElementAttributes(MobileElement element){
         JSONObject attributeJSON = new JSONObject(strUtils.str2Map(getElementObject(element).toString()));
         for (Object attribute : attributeJSON.keySet()) {
-            log.new info(attribute +" : "+ attributeJSON.get(attribute));
+            log.new Info(attribute +" : "+ attributeJSON.get(attribute));
         }
     }
 
@@ -493,7 +493,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
                 Assert.fail(GRAY+"Element was still present after "+(System.currentTimeMillis() - startTime)/1000+" seconds."+RESET);
         }
         catch (NoSuchElementException | IllegalArgumentException ignored){
-            log.new success("The element is no longer present!");
+            log.new Success("The element is no longer present!");
             driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         }
     }
@@ -528,7 +528,7 @@ public abstract class Utilities extends Driver { //TODO: Write a method which cr
         try {
             return element.isDisplayed();
         } catch (Exception e) {
-            log.new info(e);
+            log.new Info(e);
             return elementIsDisplayed(element, startTime);
         }
     }
