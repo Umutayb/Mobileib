@@ -20,11 +20,11 @@ import utils.driver.Driver;
 import org.junit.Assert;
 import java.util.List;
 
-public abstract class Utilities extends Driver { //TODO: Write a method which creates a unique css selector for elements
+public abstract class MobileUtilities extends Driver { //TODO: Write a method which creates a unique css selector for elements
 
-    public Utilities(){PageFactory.initElements(new AppiumFieldDecorator(driver), this);}
+    public MobileUtilities(){PageFactory.initElements(new AppiumFieldDecorator(driver), this);}
 
-    Printer log = new Printer(Utilities.class);
+    Printer log = new Printer(MobileUtilities.class);
 
     StringUtilities strUtils = new StringUtilities();
     NumericUtilities numeric = new NumericUtilities();
