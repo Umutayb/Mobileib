@@ -10,7 +10,6 @@ import org.junit.Assert;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import resources.Capabilities;
 import utils.Printer;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
