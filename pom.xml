@@ -6,7 +6,7 @@
 
   <groupId>com.github.Umutayb</groupId>
   <artifactId>Mobileib</artifactId>
-  <version>0.4.4</version>
+  <version>0.4.5</version>
   <packaging>jar</packaging>
 
   <name>Mobileib</name>
@@ -36,7 +36,7 @@
     <dependency>
       <groupId>com.github.umutayb</groupId>
       <artifactId>api-assured</artifactId>
-      <version>0.2.2</version>
+      <version>0.2.3</version>
     </dependency>
 
     <!-- Cucumber -->
