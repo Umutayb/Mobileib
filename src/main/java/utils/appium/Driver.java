@@ -39,7 +39,7 @@ public class Driver extends WebComponent {
 		String address = properties.getProperty("address");
 		int port = Integer.parseInt(properties.getProperty("port"));
 		while (!available(port)) port += 1;
-		
+
 		ServiceFactory.startService(address, port);	// Start Appium
 
 		assert directory != null;
@@ -57,8 +57,8 @@ public class Driver extends WebComponent {
 		ServiceFactory.service.stop();
 	}
 
-	public static boolean available(int port) {
-		System.out.println("CHECKING AVAILABILITY OF " + port);
+	public boolean available(int port) {
+		log.new Info("Checking availability of port " + port);
 		ServerSocket ss = null;
 		DatagramSocket ds = null;
 		try {
