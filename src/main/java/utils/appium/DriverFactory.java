@@ -4,6 +4,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import models.Capabilities;
 import utils.ObjectUtilities;
@@ -56,13 +57,11 @@ public class DriverFactory {
                 capabilitiesMap.put(field, iosCapabilities.get(field))
         );
 
-        printObjectFields(capabilitiesMap);
+        capabilitiesMap.keySet().iterator().forEachRemaining(field -> log.new Important(field + ":" + capabilitiesMap.get(field)));
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
             log.new Info("Setting "+ PURPLE + key + GRAY + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
-
-
 
             log.new Important("FIELD: " + Capabilities.Capability.valueOf(key.toUpperCase()));
             log.new Important("VALUE: " + capabilities.getConfig(capabilities).get(key));
