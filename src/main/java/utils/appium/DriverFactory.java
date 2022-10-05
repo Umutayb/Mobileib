@@ -1,14 +1,9 @@
 package utils.appium;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.remote.AndroidMobileCapabilityType;
-import io.appium.java_client.remote.IOSMobileCapabilityType;
-import io.appium.java_client.remote.MobileCapabilityType;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import models.Capabilities;
+import utils.FileUtilities;
 import utils.Printer;
 import utils.StringUtilities;
 import java.lang.reflect.Field;
@@ -22,6 +17,8 @@ import static resources.Colors.*;
 public class DriverFactory {
 
     static Printer log = new Printer(DriverFactory.class);
+    static FileUtilities.Json jsonUtils = new FileUtilities.Json();
+
 
     public static AppiumDriver getDriver(String deviceName, JsonObject capabilities){
         DesiredCapabilities desiredCapabilities = getConfig(capabilities);
@@ -44,6 +41,9 @@ public class DriverFactory {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
         for (String key : capabilities.keySet()) desiredCapabilities.setCapability(key, capabilities.get(key));
+
+        log.new Success("Capabilities are successfully set as:");
+        log.new Info(jsonUtils.formatJsonString(capabilities.getAsString()));
 
         return desiredCapabilities;
     }

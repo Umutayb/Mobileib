@@ -39,8 +39,7 @@ public class Driver extends WebComponent {
 
 		if(!Boolean.parseBoolean(properties.getProperty("detailed-logging")))ServiceFactory.service.clearOutPutStreams();
 
-		FileUtilities.Json jsonUtils = new FileUtilities.Json();
-		JsonObject json = jsonUtils.parseJsonFile(directory+"/"+device+".json");
+		JsonObject json = DriverFactory.jsonUtils.parseJsonFile(directory+"/"+device+".json");
 		driver = DriverFactory.getDriver(strUtils.firstLetterCapped(device), json);
 	}
 
