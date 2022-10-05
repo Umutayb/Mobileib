@@ -84,7 +84,6 @@ public class DriverFactory {
                     desiredCapabilities.setCapability(capability, capabilities.getConfig(capabilities).get(key));
                     break;
                 }
-                throw new RuntimeException("Capability named '" + key + "' is undefined!");
             }
         }
         return desiredCapabilities;
