@@ -39,40 +39,9 @@ public class DriverFactory {
 
     public static DesiredCapabilities getConfig(JsonObject capabilities) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-
         for (String key : capabilities.keySet()) desiredCapabilities.setCapability(key, capabilities.get(key));
-
         log.new Success("Capabilities are successfully set as:");
-        log.new Info(jsonUtils.formatJsonString(capabilities.getAsString()));
-
+        log.new Info(jsonUtils.formatJsonString(capabilities.toString()));
         return desiredCapabilities;
-    }
-
-    public static void printObjectFields(Object object){
-        List<Field> fields = List.of(object.getClass().getDeclaredFields());
-        StringBuilder output = new StringBuilder();
-        try {
-            for (Field field:fields){
-                field.setAccessible(true);
-                String fieldName = new StringUtilities().firstLetterCapped(field.getName());
-                output.append("\n").append(fieldName).append(" : ").append(field.get(object));
-            }
-            log.new Important("\nFields: " + output);
-        }
-        catch (IllegalAccessException e) {throw new RuntimeException(e);}
-    }
-
-    public void printModelGetterValues(Object object){
-        Method[] methods = object.getClass().getDeclaredMethods();
-        StringBuilder output = new StringBuilder();
-        try {
-            for (Method method:methods)
-                if (method.getName().contains("get")){
-                    String fieldName = new StringUtilities().firstLetterCapped(method.getName().replaceAll("get", ""));
-                    output.append("\n").append(fieldName).append(" : ").append(method.invoke(object));
-                }
-            log.new Important("\nFields: " + output);
-        }
-        catch (InvocationTargetException | IllegalAccessException e) {throw new RuntimeException(e);}
     }
 }
