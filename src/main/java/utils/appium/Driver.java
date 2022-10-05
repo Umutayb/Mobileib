@@ -10,6 +10,8 @@ import utils.PropertiesReader;
 import utils.StringUtilities;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
 import java.util.Properties;
 
 @SuppressWarnings("unused")
@@ -35,8 +37,9 @@ public class Driver extends WebComponent {
 		if (device==null) device = properties.getProperty("device");
 
 		String address = properties.getProperty("address");
-		Integer port = Integer.parseInt(properties.getProperty("port"));
-
+		int port = Integer.parseInt(properties.getProperty("port"));
+		while (!available(port)) port += 1;
+		
 		ServiceFactory.startService(address, port);	// Start Appium
 
 		assert directory != null;
@@ -52,5 +55,33 @@ public class Driver extends WebComponent {
 		log.new Info("Finalizing driver...");
 		driver.quit();
 		ServiceFactory.service.stop();
+	}
+
+	public static boolean available(int port) {
+		System.out.println("CHECKING AVAILABILITY OF " + port);
+		ServerSocket ss = null;
+		DatagramSocket ds = null;
+		try {
+			ss = new ServerSocket(port);
+			ss.setReuseAddress(true);
+			ds = new DatagramSocket(port);
+			ds.setReuseAddress(true);
+			System.out.println("PORT " + port + " IS AVAILABLE");
+			return true;
+		} catch (IOException ignored) {
+		} finally {
+			if (ds != null) {
+				ds.close();
+			}
+
+			if (ss != null) {
+				try {
+					ss.close();
+				} catch (IOException e) {
+					/* should not be thrown */
+				}
+			}
+		}
+		return false;
 	}
 }
