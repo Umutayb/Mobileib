@@ -483,11 +483,11 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     public void swipe(Point pointOfDeparture, Point pointOfArrival){
         PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
         Sequence sequence = new Sequence(finger, 1);
-        sequence.addAction(finger.createPointerMove(Duration.ofMillis(0),
+        sequence.addAction(finger.createPointerMove(Duration.ofMillis(650),
                 PointerInput.Origin.viewport(), pointOfDeparture.x, pointOfDeparture.y));
         sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.MIDDLE.asArg()));
-        sequence.addAction(new Pause(finger, ofMillis(600)));
-        sequence.addAction(finger.createPointerMove(ofMillis(200),
+        sequence.addAction(new Pause(finger, ofMillis(200)));
+        sequence.addAction(finger.createPointerMove(ofMillis(550),
                 PointerInput.Origin.viewport(), pointOfArrival.x, pointOfArrival.y));
         sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.MIDDLE.asArg()));
         driver.perform(singletonList(sequence));
