@@ -80,6 +80,7 @@ public class DriverFactory {
         StringBuilder output = new StringBuilder();
         try {
             for (Field field:fields){
+                field.setAccessible(true);
                 String fieldName = new StringUtilities().firstLetterCapped(field.getName());
                 output.append("\n").append(fieldName).append(" : ").append(field.get(object));
             }
