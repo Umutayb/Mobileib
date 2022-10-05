@@ -18,7 +18,7 @@ public class DriverFactory {
     public static AppiumDriver getDriver(String deviceName, Capabilities capabilities){
         DesiredCapabilities desiredCapabilities = getConfig(capabilities);
         try {
-            String url = "http:/" + ServiceFactory.address +":" + "4444" + "/wd/hub";
+            String url = "http:/0.0.0.0:4723/wd/hub";
             AppiumDriver driver = new AppiumDriver(new URL(url), desiredCapabilities);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
             log.new Important(deviceName+GRAY+" was selected");
@@ -26,7 +26,7 @@ public class DriverFactory {
         }
         catch (Exception gamma) {
             if(gamma.toString().contains("Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure")){
-                log.new Info("Please make sure the "+PURPLE+"Selenium Grid "+GRAY+"is on & verify the port that its running on at 'resources/test.properties'."+RESET);
+                log.new Info("Please make sure "+PURPLE+"Appium "+GRAY+"is on & verify the port that its running on at 'resources/test.properties'."+RESET);
                 throw new RuntimeException(YELLOW+gamma+RESET);
             }
             else throw new RuntimeException(YELLOW+"Something went wrong while selecting a driver "+"\n\t"+RED+gamma+RESET);
