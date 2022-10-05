@@ -33,10 +33,9 @@ public class DriverFactory {
     }
 
     public static DesiredCapabilities getConfig(JsonObject capabilities) {
+        log.new Info("Setting capabilities...");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         for (String key : capabilities.keySet()) desiredCapabilities.setCapability(key, capabilities.get(key));
-        log.new Success("Capabilities are successfully set as:");
-        log.new Info("\n" + jsonUtils.formatJsonString(capabilities.toString()));
         return desiredCapabilities;
     }
 }
