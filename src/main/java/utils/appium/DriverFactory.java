@@ -7,10 +7,8 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import models.Capabilities;
-import utils.ObjectUtilities;
 import utils.Printer;
 import utils.StringUtilities;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -94,7 +92,7 @@ public class DriverFactory {
             for (String capability: capabilitiesMap.keySet()) {
                 if (key.equalsIgnoreCase(capabilitiesMap.get(capability))) {
                     log.new Warning("CAPABILITY: " +capability);
-                    desiredCapabilities.setCapability(capability, capabilities.getConfig(capabilities).get(key));
+                    desiredCapabilities.setCapability(capabilitiesMap.get(capability), capabilities.getConfig(capabilities).get(key));
                     log.new Success(key + " is set as " + capabilities.getConfig(capabilities).get(key));
                     break;
                 }
