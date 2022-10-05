@@ -92,8 +92,8 @@ public class DriverFactory {
             );
 
             for (String capability: capabilitiesMap.keySet()) {
-                log.new Warning(capabilitiesMap.get(capability));
                 if (key.equalsIgnoreCase(capabilitiesMap.get(capability))) {
+                    log.new Warning("CAPABILITY: " +capability);
                     desiredCapabilities.setCapability(capability, capabilities.getConfig(capabilities).get(key));
                     log.new Success(key + " is set as " + capabilities.getConfig(capabilities).get(key));
                     break;
