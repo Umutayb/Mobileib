@@ -57,6 +57,30 @@ public class DriverFactory {
                 capabilitiesMap.put(field, iosCapabilities.get(field))
         );
 
+        try {
+            for (Field field :MobileCapabilityType.class.getDeclaredFields()) {
+                field.setAccessible(true);
+                log.new Important("MOBILE " + field.getName() + ":" + field.get(MobileCapabilityType.class));
+            }
+        }
+        catch (IllegalAccessException e) {throw new RuntimeException(e);}
+
+        try {
+            for (Field field :AndroidMobileCapabilityType.class.getDeclaredFields()) {
+                field.setAccessible(true);
+                log.new Important("ANDROID " + field.getName() + ":" + field.get(AndroidMobileCapabilityType.class));
+            }
+        }
+        catch (IllegalAccessException e) {throw new RuntimeException(e);}
+
+        try {
+            for (Field field :IOSMobileCapabilityType.class.getDeclaredFields()) {
+                field.setAccessible(true);
+                log.new Important("IOS " + field.getName() + ":" + field.get(IOSMobileCapabilityType.class));
+            }
+        }
+        catch (IllegalAccessException e) {throw new RuntimeException(e);}
+
         capabilitiesMap.keySet().iterator().forEachRemaining(field -> log.new Important(field + ":" + capabilitiesMap.get(field)));
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
