@@ -3,13 +3,22 @@ package utils;
 import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
 import context.TestStore;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.Pause;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.PageFactory;
 import com.gargoylesoftware.htmlunit.*;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
 import org.json.simple.JSONObject;
+
+import static java.time.Duration.ofMillis;
+import static java.util.Collections.singletonList;
 import static resources.Colors.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -115,7 +124,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     }
 
     public Boolean elementIs(WebElement element, ElementState state, long initialTime){
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        driver.manage().timeouts().implicitlyWait(ofMillis(500));
         try {
             boolean condition;
             switch (state){
@@ -160,7 +169,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     }
 
     public WebElement waitUntilElementIsVisible(WebElement element, long initialTime){
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        driver.manage().timeouts().implicitlyWait(ofMillis(500));
         try {if (!element.isDisplayed()){throw new InvalidElementStateException("Element is not displayed!");}}
         catch (WebDriverException exception){
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
@@ -174,7 +183,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     }
 
     public void waitAndClickIfElementIsClickable(WebElement element, Boolean scroll, long initialTime){
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        driver.manage().timeouts().implicitlyWait(ofMillis(500));
         try {
             if (!element.isEnabled()){throw new InvalidElementStateException("Element is not enabled!");}
             else {
@@ -223,7 +232,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
 
     public WebElement acquireNamedElementAmongst(List<WebElement> items, String selectionName, long initialTime){
         log.new Info("Acquiring element called " + highlighted(Color.BLUE, selectionName));
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        driver.manage().timeouts().implicitlyWait(ofMillis(500));
         try {
             for (WebElement selection : items) {
                 String name = selection.getAccessibleName();
@@ -268,7 +277,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
 
     public WebElement acquireElementUsingAttributeAmongst(List<WebElement> elements, String attributeName, String attributeValue, long initialTime){
         log.new Info("Acquiring element called " + highlighted(Color.BLUE, attributeValue) + " using its " + highlighted(Color.BLUE, attributeName) + " attribute");
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        driver.manage().timeouts().implicitlyWait(ofMillis(500));
         try {
             for (WebElement selection : elements) {
                 String attribute = selection.getAttribute(attributeName);
@@ -401,32 +410,112 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     }
 
     //This method scrolls an element to the center of the view
+    //This method scrolls an element to the center of the view
     public WebElement centerElement(WebElement element){
-        String scrollScript = "var viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);"
-                + "var elementTop = arguments[0].getBoundingClientRect().top;"
-                + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
 
-        ((JavascriptExecutor) driver).executeScript(scrollScript, element);
+        Point center = new Point(
+                driver.manage().window().getSize().getWidth()/2,
+                driver.manage().window().getSize().getHeight()/2
+        );
 
-        waitFor(0.3);
+        int verticalScrollDist = element.getLocation().getY() - driver.manage().window().getSize().getHeight()/2;
+        int verticalScrollStep = driver.manage().window().getSize().getHeight()/3;
+
+        int horizontalScrollDist = element.getLocation().getX() - driver.manage().window().getSize().getWidth()/2;
+        int horizontalScrollStep = driver.manage().window().getSize().getWidth()/3;
+        for (int i = 0; i <= verticalScrollDist / verticalScrollStep; i++) {
+            if (i == verticalScrollDist / verticalScrollStep){
+                swipeFromCenter(new Point(
+                        center.getX() + horizontalScrollDist % horizontalScrollStep,
+                        center.getY() + verticalScrollDist % verticalScrollStep));
+            }
+            else{
+                swipeFromCenter(new Point(
+                        center.getX() + horizontalScrollStep,
+                        center.getY() + verticalScrollStep));
+            }
+        }
+
         return element;
     }
 
-    public void scroll(Direction direction){
-        log.new Info("Scrolling " + highlighted(Color.BLUE, direction.name().toLowerCase()));
-        String script;
-        switch (direction){
-            case UP:
-                script = "window.scrollBy(0,-document.body.scrollHeight)";
+    public void swiper(String direction){
+        Point center = new Point(
+                driver.manage().window().getSize().getWidth()/2,
+                driver.manage().window().getSize().getHeight()/2);
+
+        Point destination;
+        switch (direction.toLowerCase()){
+            case "up":
+                destination = new Point(
+                        center.getX(),
+                        center.getY() + driver.manage().window().getSize().getHeight()/3);
                 break;
-            case DOWN:
-                script = "window.scrollBy(0,document.body.scrollHeight)";
+
+            case "down":
+                destination = new Point(
+                        center.getX(),
+                        center.getY() - driver.manage().window().getSize().getHeight()/3);
+                break;
+
+            case "left":
+                destination = new Point(
+                        center.getX()-driver.manage().window().getSize().getWidth()/3,
+                        center.getY());
+                break;
+
+            case "right":
+                destination = new Point(
+                        center.getX()+driver.manage().window().getSize().getWidth()/3,
+                        center.getY());
                 break;
 
             default:
-                throw new EnumConstantNotPresentException(Direction.class, direction.name());
+                destination = null;
+                Assert.fail(YELLOW+"No such swipe direction was defined in horizontal swipe.");
         }
-        ((JavascriptExecutor) driver).executeScript(script);
+
+        swipe(center, destination);
+    }
+
+    public void swipe(Point pointOfDeparture, Point pointOfArrival){
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence sequence = new Sequence(finger, 1);
+        sequence.addAction(finger.createPointerMove(Duration.ofMillis(0),
+                PointerInput.Origin.viewport(), pointOfDeparture.x, pointOfDeparture.y));
+        sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.MIDDLE.asArg()));
+        sequence.addAction(new Pause(finger, ofMillis(600)));
+        sequence.addAction(finger.createPointerMove(ofMillis(600),
+                PointerInput.Origin.viewport(), pointOfArrival.x, pointOfArrival.y));
+        sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.MIDDLE.asArg()));
+        driver.perform(singletonList(sequence));
+    }
+
+    public void swipeFromCenter(Point point){
+        Point center = new Point(
+                driver.manage().window().getSize().getWidth()/2,
+                driver.manage().window().getSize().getHeight()/2);
+        swipe(center, point);
+    }
+
+    public WebElement swipeElement(WebElement element, Point point){
+        Point center = new Point(element.getLocation().x, element.getLocation().y);
+        swipe(center, point);
+        return element;
+    }
+
+    public WebElement swipeWithOffset(WebElement element, Integer xOffset, Integer yOffset){
+        Point from = new Point(element.getLocation().x, element.getLocation().y);
+        Point to = new Point(element.getLocation().x + xOffset, element.getLocation().y + yOffset);
+        swipe(from, to);
+        return element;
+    }
+
+    public WebElement swipeFromTo(WebElement element, WebElement destinationElement){
+        Point from = new Point(element.getLocation().x, element.getLocation().y);
+        Point to = new Point(destinationElement.getLocation().x, destinationElement.getLocation().y);
+        swipe(from, to);
+        return element;
     }
 
     //This method verifies current url
@@ -519,7 +608,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     public void waitUntilElementIsNoLongerPresent(WebElement element, long startTime){
         try {
             WebDriver subDriver = driver;
-            subDriver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+            subDriver.manage().timeouts().implicitlyWait(ofMillis(500));
             List<WebElement> elementPresence = driver.findElements(By.xpath(generateXPath(element,"")));
             while (elementPresence.size()>0){
                 if ((System.currentTimeMillis() - startTime) > 15000)
@@ -548,7 +637,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     }
 
     public WebElement waitUntilElementIsClickable(WebElement element, long initialTime){
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        driver.manage().timeouts().implicitlyWait(ofMillis(500));
         if (System.currentTimeMillis()-initialTime>15000){
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
             return null;
