@@ -13,6 +13,7 @@ import utils.StringUtilities;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 import static resources.Colors.*;
@@ -74,14 +75,13 @@ public class DriverFactory {
     }
 
     public static void printModelGetterValues(Object object){
-        Method[] methods = object.getClass().getDeclaredMethods();
+        List<Method> methods = List.of(object.getClass().getDeclaredMethods());
         StringBuilder output = new StringBuilder();
         try {
-            for (Method method:methods)
-                if (method.getName().contains("get")){
-                    String fieldName = new StringUtilities().firstLetterCapped(method.getName().replaceAll("get", ""));
-                    output.append("\n").append(fieldName).append(" : ").append(method.invoke(object));
-                }
+            for (Method method:methods){
+                String fieldName = new StringUtilities().firstLetterCapped(method.getName().replaceAll("get", ""));
+                output.append("\n").append(fieldName).append(" : ").append(method.invoke(object));
+            }
             log.new Important("\nFields: " + output);
         }
         catch (InvocationTargetException | IllegalAccessException e) {throw new RuntimeException(e);}
