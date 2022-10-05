@@ -48,6 +48,14 @@ public class DriverFactory {
 
         Map<String, String> capabilitiesMap = new HashMap<>();
 
+        Arrays.stream(CapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
+                {
+                    field.setAccessible(true);
+                    try {capabilitiesMap.put(field.getName(), field.get(CapabilityType.class).toString());}
+                    catch (IllegalAccessException e) {throw new RuntimeException(e);}
+                }
+        );
+
         Arrays.stream(MobileCapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
                 {
                     field.setAccessible(true);
@@ -76,7 +84,12 @@ public class DriverFactory {
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
-            log.new Info("Setting "+ PURPLE + key + GRAY + " capability as: \"" + PURPLE + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
+            log.new Info("Setting "+
+                    PURPLE + key + GRAY +
+                    " capability as: \"" +
+                    PURPLE + capabilities.getConfig(capabilities).get(key) + GRAY +
+                    "\" " + RESET
+            );
 
             for (String capability: capabilitiesMap.keySet()) {
                 log.new Warning(capabilitiesMap.get(capability));
