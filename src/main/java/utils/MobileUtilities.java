@@ -476,7 +476,6 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
                 destination = null;
                 Assert.fail(YELLOW+"No such swipe direction was defined in horizontal swipe.");
         }
-
         swipe(center, destination);
     }
 
@@ -490,6 +489,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
         sequence.addAction(finger.createPointerMove(ofMillis(800),
                 PointerInput.Origin.viewport(), pointOfArrival.x, pointOfArrival.y));
         sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.MIDDLE.asArg()));
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*[contains(@class, '')]")));
         driver.perform(singletonList(sequence));
     }
 
