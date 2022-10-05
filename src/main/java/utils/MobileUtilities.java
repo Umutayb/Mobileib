@@ -490,7 +490,20 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
                 PointerInput.Origin.viewport(), pointOfArrival.x, pointOfArrival.y));
         sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.MIDDLE.asArg()));
         elementIs(driver.findElement(By.xpath("//*[contains(@class, '')]")), ElementState.ENABLED, System.currentTimeMillis());
-        driver.perform(singletonList(sequence));
+        performSequence(sequence, System.currentTimeMillis());
+    }
+
+    public void performSequence(Sequence sequence, long initialTime){
+        driver.manage().timeouts().implicitlyWait(ofMillis(500));
+        try {driver.perform(singletonList(sequence));}
+        catch (WebDriverException exception){
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+            if (!(System.currentTimeMillis()-initialTime>15000)) {
+                log.new Warning("Recursion! (" + exception.getClass().getName() + ")");
+                performSequence(sequence, initialTime);
+            }
+            else throw exception;
+        }
     }
 
     public void swipeFromCenter(Point point){
