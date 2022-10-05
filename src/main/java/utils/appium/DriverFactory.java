@@ -4,13 +4,10 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
-import models.enums.Capability;
-import org.junit.Assert;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import models.Capabilities;
 import utils.ObjectUtilities;
 import utils.Printer;
-import java.net.URL;
 import java.time.Duration;
 import java.util.Map;
 
