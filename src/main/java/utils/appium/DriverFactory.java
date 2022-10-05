@@ -76,9 +76,10 @@ public class DriverFactory {
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
-            log.new Info("Setting "+ PURPLE + key + GRAY + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
+            log.new Info("Setting "+ PURPLE + key + GRAY + " capability as: \"" + PURPLE + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
 
             for (String capability: capabilitiesMap.keySet()) {
+                log.new Warning(capabilitiesMap.get(capability));
                 if (key.equalsIgnoreCase(capabilitiesMap.get(capability))) {
                     desiredCapabilities.setCapability(capability, capabilities.getConfig(capabilities).get(key));
                     break;
