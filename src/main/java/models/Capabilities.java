@@ -46,4 +46,30 @@ public class Capabilities {
         return config;
     }
 
+    public enum Capability {
+        DEVICE_NAME("DEVICENAME"),
+        PLATFORM_NAME("PLATFORMNAME"),
+        PLATFORM_VERSION("PLATFORMVERSION"),
+        AUTOMATION_NAME("AUTOMATIONNAME"),
+        APP("APP"),
+        APP_ACTIVITY("APPACTIVITY"),
+        APP_PACKAGE("APPPACKAGE"),
+        UNEXPECTED_ALERT_BEHAVIOUR("UNEXPECTEDALERTBEHAVIOUR"),
+        UDID("UDID"),
+        TAKES_SCREENSHOT("TAKESSCREENSHOT"),
+        ROTATABLE("ROTATABLE"),
+        ORIENTATION("ORIENTATION"),
+        LOCALE("LOCALE"),
+        APPLICATION_NAME("APPLICATIONNAME"),
+        APP_PATH("APPPATH"),
+        LANGUAGE("LANGUAGE"),
+        AVD_NAME("AVDNAME"),
+        NO_RESET("NORESET"),
+        RESET("RESET"),
+        UI_AUTOMATOR_2_SERVER_INSTALL_TIMEOUT("UIAUTOMATOR2SERVERINSTALLTIMEOUT");
+
+        final String value;
+
+        Capability(String value){this.value = value;}
+    }
 }

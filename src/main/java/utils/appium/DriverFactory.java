@@ -2,13 +2,18 @@ package utils.appium;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
+import io.appium.java_client.remote.IOSMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
+import models.enums.Capability;
 import org.junit.Assert;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import models.Capabilities;
+import utils.ObjectUtilities;
 import utils.Printer;
 import java.net.URL;
 import java.time.Duration;
+import java.util.Map;
+
 import static resources.Colors.*;
 
 public class DriverFactory {
@@ -32,126 +37,30 @@ public class DriverFactory {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public static DesiredCapabilities getConfig(Capabilities capabilities) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        ObjectUtilities objUtils = new ObjectUtilities();
+
+        Map<String, Object> capabilitiesMap = objUtils.getFields(MobileCapabilityType.class);
+        Map<String, Object> androidCapabilities = objUtils.getFields(AndroidMobileCapabilityType.class);
+        Map<String, Object> iosCapabilities = objUtils.getFields(IOSMobileCapabilityType.class);
+
+        androidCapabilities.keySet().iterator().forEachRemaining(field ->
+                capabilitiesMap.put(field, androidCapabilities.get(field))
+        );
+
+        iosCapabilities.keySet().iterator().forEachRemaining(field ->
+                capabilitiesMap.put(field, iosCapabilities.get(field))
+        );
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
             log.new Info("Setting "+PURPLE + key + GRAY + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
 
-            switch (key){
-                case "deviceName":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.DEVICE_NAME, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "avdName":
-                    desiredCapabilities.setCapability(
-                            AndroidMobileCapabilityType.AVD, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "automationName":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.AUTOMATION_NAME, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "platformVersion":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.PLATFORM_VERSION, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "platformName":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.PLATFORM_NAME, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "language":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.LANGUAGE, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "app":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.APP, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "applicationName":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.APPLICATION_NAME, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "locale":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.LOCALE, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "reset":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.FULL_RESET, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "noReset":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.NO_RESET, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "orientation":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.ORIENTATION, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "rotatable":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.ROTATABLE, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "takesScreenshot":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.TAKES_SCREENSHOT, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "UDID":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.UDID, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "unexpectedAlertBehaviour":
-                    desiredCapabilities.setCapability(
-                            MobileCapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "appPackage":
-                    desiredCapabilities.setCapability(
-                            AndroidMobileCapabilityType.APP_PACKAGE, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                case "appActivity":
-                    desiredCapabilities.setCapability(
-                            AndroidMobileCapabilityType.APP_ACTIVITY, capabilities.getConfig(capabilities).get(key)
-                    );
-                    break;
-
-                default:
-                    Assert.fail(GRAY+ "The capability type '" +key+ "' was undefined."+RED+"\nTest Failed."+RESET);
-            }
+            desiredCapabilities.setCapability(
+                    capabilitiesMap.get(Capabilities.Capability.valueOf(key.toUpperCase()).toString()).toString(),
+                    capabilities.getConfig(capabilities).get(key)
+            );
         }
         return desiredCapabilities;
     }
