@@ -1,15 +1,10 @@
 package utils.appium;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.webdriverextensions.WebComponent;
 import com.google.gson.JsonObject;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import models.Capabilities;
 import utils.*;
-
-import java.io.FileReader;
-import java.io.IOException;
 
 import static utils.FileUtilities.properties;
 
@@ -17,7 +12,6 @@ import static utils.FileUtilities.properties;
 public class Driver extends WebComponent {
 
 	public static AppiumDriver driver;
-
 	public static WebDriverWait wait;
 
 	PropertiesReader reader = new PropertiesReader("properties-from-pom.properties");
@@ -27,9 +21,9 @@ public class Driver extends WebComponent {
 	public void initialize() {
 		log.new Info("Initializing appium service & driver");
 		String device = reader.getProperty("device");
+		if (device==null) device = properties.getProperty("device");
 
 		String directory = properties.getProperty("config");//src/test/resources/configurations
-		if (device==null) device = properties.getProperty("device");
 
 		String address = properties.getProperty("address");
 		int port = Integer.parseInt(properties.getProperty("port"));
@@ -45,9 +39,8 @@ public class Driver extends WebComponent {
 
 	public void terminate(){
 		log.new Info("Finalizing driver...");
-		driver.quit();
-		ServiceFactory.service.stop();
+		try {driver.quit();}
+		catch (Exception ignored){}
+		finally {ServiceFactory.service.stop();}
 	}
-
-
 }

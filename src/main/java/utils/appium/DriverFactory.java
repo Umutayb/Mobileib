@@ -5,12 +5,7 @@ import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import utils.FileUtilities;
 import utils.Printer;
-import utils.StringUtilities;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.Duration;
-import java.util.List;
 
 import static resources.Colors.*;
 
@@ -41,7 +36,7 @@ public class DriverFactory {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         for (String key : capabilities.keySet()) desiredCapabilities.setCapability(key, capabilities.get(key));
         log.new Success("Capabilities are successfully set as:");
-        log.new Info(jsonUtils.formatJsonString(capabilities.toString()));
+        log.new Info("\n" + jsonUtils.formatJsonString(capabilities.toString()));
         return desiredCapabilities;
     }
 }
