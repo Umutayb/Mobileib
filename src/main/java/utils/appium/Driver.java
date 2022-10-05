@@ -2,13 +2,12 @@ package utils.appium;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.webdriverextensions.WebComponent;
+import com.google.gson.JsonObject;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import models.Capabilities;
-import utils.Printer;
-import utils.PropertiesReader;
-import utils.StringUtilities;
-import utils.SystemUtilities;
+import utils.*;
+
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -40,13 +39,9 @@ public class Driver extends WebComponent {
 
 		if(!Boolean.parseBoolean(properties.getProperty("detailed-logging")))ServiceFactory.service.clearOutPutStreams();
 
-		assert directory != null;
-		try(FileReader file = new FileReader(directory+"/"+device+".json")) {
-			Capabilities capabilities = new ObjectMapper().readValue(file, Capabilities.class);
-			driver = DriverFactory.getDriver(strUtils.firstLetterCapped(device), capabilities);
-		}
-		catch (IOException e) {log.new Warning(e.getMessage());}
-		assert driver != null;
+		FileUtilities.Json jsonUtils = new FileUtilities.Json();
+		JsonObject json = jsonUtils.parseJsonFile(directory+"/"+device+".json");
+		driver = DriverFactory.getDriver(strUtils.firstLetterCapped(device), json);
 	}
 
 	public void terminate(){

@@ -1,5 +1,7 @@
 package utils.appium;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.IOSMobileCapabilityType;
@@ -13,10 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static resources.Colors.*;
 
@@ -24,7 +23,7 @@ public class DriverFactory {
 
     static Printer log = new Printer(DriverFactory.class);
 
-    public static AppiumDriver getDriver(String deviceName, Capabilities capabilities){
+    public static AppiumDriver getDriver(String deviceName, JsonObject capabilities){
         DesiredCapabilities desiredCapabilities = getConfig(capabilities);
         try {
             AppiumDriver driver = new AppiumDriver(ServiceFactory.service.getUrl(), desiredCapabilities);
@@ -41,63 +40,11 @@ public class DriverFactory {
         }
     }
 
-    public static DesiredCapabilities getConfig(Capabilities capabilities) {
+    public static DesiredCapabilities getConfig(JsonObject capabilities) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
-        Map<String, String> capabilitiesMap = new HashMap<>();
+        for (String key : capabilities.keySet()) desiredCapabilities.setCapability(key, capabilities.get(key));
 
-        Arrays.stream(CapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
-                {
-                    field.setAccessible(true);
-                    try {capabilitiesMap.put(field.getName(), field.get(CapabilityType.class).toString());}
-                    catch (IllegalAccessException e) {throw new RuntimeException(e);}
-                }
-        );
-
-        Arrays.stream(MobileCapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
-                {
-                    field.setAccessible(true);
-                    try {capabilitiesMap.put(field.getName(), field.get(MobileCapabilityType.class).toString());}
-                    catch (IllegalAccessException e) {throw new RuntimeException(e);}
-                }
-        );
-
-        Arrays.stream(AndroidMobileCapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
-                {
-                    field.setAccessible(true);
-                    try {capabilitiesMap.put(field.getName(), field.get(AndroidMobileCapabilityType.class).toString());}
-                    catch (IllegalAccessException e) {throw new RuntimeException(e);}
-                }
-        );
-
-        Arrays.stream(IOSMobileCapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
-                {
-                    field.setAccessible(true);
-                    try {capabilitiesMap.put(field.getName(), field.get(IOSMobileCapabilityType.class).toString());}
-                    catch (IllegalAccessException e) {throw new RuntimeException(e);}
-                }
-        );
-
-        //capabilitiesMap.keySet().iterator().forEachRemaining(field -> log.new Important(field + ":" + capabilitiesMap.get(field)));
-
-        for (String key : capabilities.getConfig(capabilities).keySet()) {
-            log.new Info("Setting "+
-                    PURPLE + key + GRAY +
-                    " capability as: \"" +
-                    PURPLE + capabilities.getConfig(capabilities).get(key) + GRAY +
-                    "\" " + RESET
-            );
-            desiredCapabilities.setCapability(key, capabilities.getConfig(capabilities).get(key));
-/*
-            for (String capability: capabilitiesMap.values()) {
-                if (key.equalsIgnoreCase(capability)) {
-                    desiredCapabilities.setCapability(capability, capabilities.getConfig(capabilities).get(key));
-                    log.new Success(key + " is set as " + capabilities.getConfig(capabilities).get(key));
-                    break;
-                }
-            }*/
-        }
-        printObjectFields(desiredCapabilities);
         return desiredCapabilities;
     }
 
