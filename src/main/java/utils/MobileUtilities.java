@@ -3,9 +3,6 @@ package utils;
 import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
 import context.TestStore;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.TouchAction;
-import io.appium.java_client.touch.WaitOptions;
-import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
@@ -16,7 +13,6 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Properties;
 import org.json.simple.JSONObject;
-
 import static java.time.Duration.ofMillis;
 import static java.util.Collections.singletonList;
 import static resources.Colors.*;
@@ -38,7 +34,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     public enum Color {CYAN, RED, GREEN, YELLOW, PURPLE, GRAY, BLUE}
     public enum Navigation {BACKWARDS, FORWARDS}
     public enum ElementState {ENABLED, DISPLAYED, SELECTED, DISABLED, UNSELECTED, ABSENT}
-    public enum Direction {UP, DOWN}
+    public enum Direction {UP, DOWN, LEFT, RIGHT}
     public enum Locator {XPATH, CSS}
 
     public Properties properties;
@@ -439,35 +435,40 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
         return element;
     }
 
-    public void swiper(String direction){
+    public void swiper(Direction direction){
         Point center = new Point(
                 driver.manage().window().getSize().getWidth()/2,
-                driver.manage().window().getSize().getHeight()/2);
+                driver.manage().window().getSize().getHeight()/2
+        );
 
         Point destination;
-        switch (direction.toLowerCase()){
-            case "up":
+        switch (direction){
+            case UP:
                 destination = new Point(
                         center.getX(),
-                        center.getY() + driver.manage().window().getSize().getHeight()/3);
+                        center.getY() + driver.manage().window().getSize().getHeight()/2
+                );
                 break;
 
-            case "down":
+            case DOWN:
                 destination = new Point(
                         center.getX(),
-                        center.getY() - driver.manage().window().getSize().getHeight()/3);
+                        center.getY() - driver.manage().window().getSize().getHeight()/2
+                );
                 break;
 
-            case "left":
+            case LEFT:
                 destination = new Point(
-                        center.getX()-driver.manage().window().getSize().getWidth()/3,
-                        center.getY());
+                        center.getX()-driver.manage().window().getSize().getWidth()/2,
+                        center.getY()
+                );
                 break;
 
-            case "right":
+            case RIGHT:
                 destination = new Point(
-                        center.getX()+driver.manage().window().getSize().getWidth()/3,
-                        center.getY());
+                        center.getX()+driver.manage().window().getSize().getWidth()/2,
+                        center.getY()
+                );
                 break;
 
             default:
