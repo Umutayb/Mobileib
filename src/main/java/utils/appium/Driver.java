@@ -26,16 +26,17 @@ public class Driver extends WebComponent {
 	public void initialize() {
 		log.new Info("Initializing appium service & driver");
 		String device = reader.getProperty("device");
-		String address = properties.getProperty("address");
-		Integer port = Integer.getInteger(properties.getProperty("port"));
 
-		// Start appium
-		ServiceFactory.startService(address, port);
 
 		try {properties.load(new FileReader("src/test/resources/test.properties"));}
 		catch (IOException e) {log.new Warning(e.getMessage());}
 		String directory = properties.getProperty("config");//src/test/resources/configurations
 		if (device==null) device = properties.getProperty("device");
+
+		String address = properties.getProperty("address");
+		Integer port = Integer.getInteger(properties.getProperty("port"));
+
+		ServiceFactory.startService(address, port);	// Start Appium
 
 		assert directory != null;
 		try(FileReader file = new FileReader(directory+"/"+device+".json")) {

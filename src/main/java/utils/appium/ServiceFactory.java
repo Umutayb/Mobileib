@@ -14,7 +14,7 @@ public class ServiceFactory {
     static Integer port;
 
     public static void startService(String address, Integer port){
-        log.new Info("Starting service on " + PURPLE + address + port + RESET);
+        log.new Info("Starting service on " + PURPLE + address + ":" + port + RESET);
         ServiceFactory.address = address;
         ServiceFactory.port = port;
         service = new AppiumServiceBuilder()
