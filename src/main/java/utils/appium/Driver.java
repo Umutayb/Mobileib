@@ -34,7 +34,7 @@ public class Driver extends WebComponent {
 		if (device==null) device = properties.getProperty("device");
 
 		String address = properties.getProperty("address");
-		Integer port = Integer.getInteger(properties.getProperty("port"));
+		Integer port = Integer.parseInt(properties.getProperty("port"));
 
 		ServiceFactory.startService(address, port);	// Start Appium
 
