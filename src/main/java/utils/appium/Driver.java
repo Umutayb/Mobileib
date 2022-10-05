@@ -3,8 +3,14 @@ package utils.appium;
 import com.github.webdriverextensions.WebComponent;
 import com.google.gson.JsonObject;
 import io.appium.java_client.AppiumDriver;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.*;
+
+import java.io.FileReader;
+import java.io.IOException;
 
 import static utils.FileUtilities.properties;
 
@@ -33,7 +39,7 @@ public class Driver extends WebComponent {
 
 		if(!Boolean.parseBoolean(properties.getProperty("detailed-logging")))ServiceFactory.service.clearOutPutStreams();
 
-		JsonObject json = DriverFactory.jsonUtils.parseJsonFile(directory+"/"+device+".json");
+		JSONObject json = DriverFactory.jsonUtils.parseJSONFile(directory+"/"+device+".json");
 		driver = DriverFactory.getDriver(strUtils.firstLetterCapped(device), json);
 	}
 

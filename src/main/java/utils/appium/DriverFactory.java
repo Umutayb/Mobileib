@@ -1,7 +1,7 @@
 package utils.appium;
 
-import com.google.gson.JsonObject;
 import io.appium.java_client.AppiumDriver;
+import org.json.simple.JSONObject;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import utils.FileUtilities;
 import utils.Printer;
@@ -15,7 +15,7 @@ public class DriverFactory {
     static FileUtilities.Json jsonUtils = new FileUtilities.Json();
 
 
-    public static AppiumDriver getDriver(String deviceName, JsonObject capabilities){
+    public static AppiumDriver getDriver(String deviceName, JSONObject capabilities){
         DesiredCapabilities desiredCapabilities = getConfig(capabilities);
         try {
             AppiumDriver driver = new AppiumDriver(ServiceFactory.service.getUrl(), desiredCapabilities);
@@ -32,10 +32,10 @@ public class DriverFactory {
         }
     }
 
-    public static DesiredCapabilities getConfig(JsonObject capabilities) {
+    public static DesiredCapabilities getConfig(JSONObject capabilities) {
         log.new Info("Setting capabilities...");
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        for (String key : capabilities.keySet()) desiredCapabilities.setCapability(key, capabilities.get(key));
+        for (Object key : capabilities.keySet()) desiredCapabilities.setCapability((String) key, capabilities.get(key));
         return desiredCapabilities;
     }
 }
