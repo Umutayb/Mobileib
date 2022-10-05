@@ -10,6 +10,7 @@ import utils.ObjectUtilities;
 import utils.Printer;
 import utils.StringUtilities;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
@@ -55,7 +56,7 @@ public class DriverFactory {
                 capabilitiesMap.put(field, iosCapabilities.get(field))
         );
 
-        printModelGetterValues(capabilitiesMap);
+        printObjectFields(capabilitiesMap);
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
@@ -74,14 +75,28 @@ public class DriverFactory {
         return desiredCapabilities;
     }
 
-    public static void printModelGetterValues(Object object){
-        List<Method> methods = List.of(object.getClass().getDeclaredMethods());
+    public static void printObjectFields(Object object){
+        List<Field> fields = List.of(object.getClass().getDeclaredFields());
         StringBuilder output = new StringBuilder();
         try {
-            for (Method method:methods){
-                String fieldName = new StringUtilities().firstLetterCapped(method.getName().replaceAll("get", ""));
-                output.append("\n").append(fieldName).append(" : ").append(method.invoke(object));
+            for (Field field:fields){
+                String fieldName = new StringUtilities().firstLetterCapped(field.getName());
+                output.append("\n").append(fieldName).append(" : ").append(field.get(object));
             }
+            log.new Important("\nFields: " + output);
+        }
+        catch (IllegalAccessException e) {throw new RuntimeException(e);}
+    }
+
+    public void printModelGetterValues(Object object){
+        Method[] methods = object.getClass().getDeclaredMethods();
+        StringBuilder output = new StringBuilder();
+        try {
+            for (Method method:methods)
+                if (method.getName().contains("get")){
+                    String fieldName = new StringUtilities().firstLetterCapped(method.getName().replaceAll("get", ""));
+                    output.append("\n").append(fieldName).append(" : ").append(method.invoke(object));
+                }
             log.new Important("\nFields: " + output);
         }
         catch (InvocationTargetException | IllegalAccessException e) {throw new RuntimeException(e);}
