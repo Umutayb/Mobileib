@@ -18,8 +18,7 @@ public class DriverFactory {
     public static AppiumDriver getDriver(String deviceName, Capabilities capabilities){
         DesiredCapabilities desiredCapabilities = getConfig(capabilities);
         try {
-            String url = "0.0.0.0:4723/wd/hub";
-            AppiumDriver driver = new AppiumDriver(new URL(url), desiredCapabilities);
+            AppiumDriver driver = new AppiumDriver(ServiceFactory.service.getUrl(), desiredCapabilities);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
             log.new Important(deviceName+GRAY+" was selected");
             return driver;

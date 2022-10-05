@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+@SuppressWarnings("unused")
 public class Driver extends WebComponent {
 
 	public static AppiumDriver driver;
@@ -50,5 +51,6 @@ public class Driver extends WebComponent {
 	public void terminate(){
 		log.new Info("Finalizing driver...");
 		driver.quit();
+		ServiceFactory.service.stop();
 	}
 }
