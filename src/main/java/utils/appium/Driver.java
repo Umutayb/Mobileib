@@ -1,22 +1,22 @@
-package utils.driver;
+package utils.appium;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.webdriverextensions.WebComponent;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
-import io.cucumber.core.api.Scenario;
-import resources.Capabilities;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import models.Capabilities;
 import utils.Printer;
 import utils.PropertiesReader;
 import utils.StringUtilities;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
 public class Driver extends WebComponent {
 
-	public static AppiumDriver<MobileElement> driver;
+	public static AppiumDriver driver;
+
+	public static WebDriverWait wait;
 
 	PropertiesReader reader = new PropertiesReader("properties-from-pom.properties");
 	StringUtilities strUtils = new StringUtilities();
@@ -24,14 +24,18 @@ public class Driver extends WebComponent {
 	Printer log = new Printer(Driver.class);
 
 	public void initialize() {
-		log.new Info("Initializing driver");
+		log.new Info("Initializing appium service & driver");
 		String device = reader.getProperty("device");
+		String address = properties.getProperty("address");
+		Integer port = Integer.getInteger(properties.getProperty("port"));
+
+		// Start appium
+		ServiceFactory.startService(address, port);
 
 		try {properties.load(new FileReader("src/test/resources/test.properties"));}
 		catch (IOException e) {log.new Warning(e.getMessage());}
 		String directory = properties.getProperty("config");//src/test/resources/configurations
-		if (device==null)
-			device = properties.getProperty("device");
+		if (device==null) device = properties.getProperty("device");
 
 		assert directory != null;
 		try(FileReader file = new FileReader(directory+"/"+device+".json")) {
@@ -42,10 +46,8 @@ public class Driver extends WebComponent {
 		assert driver != null;
 	}
 
-	public void terminate(Scenario scenario){
+	public void terminate(){
 		log.new Info("Finalizing driver...");
-		if (scenario.isFailed())
-			log.captureScreen(scenario.getName()+"@"+scenario.getLine(),driver);
 		driver.quit();
 	}
 }

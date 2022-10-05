@@ -1,9 +1,9 @@
-package resources;
+package models;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
-import utils.JsonUtilities;
+import utils.FileUtilities;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +34,9 @@ public class Capabilities {
     public Map<String, String> getConfig(Capabilities capabilities){
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> config = new HashMap<>();
-        JsonUtilities jsonUtils = new JsonUtilities();
+        FileUtilities.Json jsonUtilities = new FileUtilities.Json();
         try {
-            JSONObject configJson = jsonUtils.str2json(mapper.writeValueAsString(capabilities));
+            JSONObject configJson = jsonUtilities.str2json(mapper.writeValueAsString(capabilities));
             for (Object key:configJson.keySet()) {
                 if (configJson.get(key)!=null)
                     config.put((String) key,(String)configJson.get(key));
