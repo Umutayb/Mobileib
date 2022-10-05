@@ -41,7 +41,7 @@ public class Driver extends WebComponent {
 		assert directory != null;
 		try(FileReader file = new FileReader(directory+"/"+device+".json")) {
 			Capabilities capabilities = new ObjectMapper().readValue(file, Capabilities.class);
-			driver = DriverFactory.getDriver(strUtils.firstLetterCapped(device), driver, capabilities);
+			driver = DriverFactory.getDriver(strUtils.firstLetterCapped(device), capabilities);
 		}
 		catch (IOException e) {log.new Warning(e.getMessage());}
 		assert driver != null;

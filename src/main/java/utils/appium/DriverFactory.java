@@ -15,11 +15,11 @@ public class DriverFactory {
 
     static Printer log = new Printer(DriverFactory.class);
 
-    public static AppiumDriver getDriver(String deviceName, AppiumDriver driver, Capabilities capabilities){
+    public static AppiumDriver getDriver(String deviceName, Capabilities capabilities){
         DesiredCapabilities desiredCapabilities = getConfig(capabilities);
         try {
-            String url = "http:/" + ServiceFactory.address +":" + ServiceFactory.port + "/wd/hub";
-            driver = new AppiumDriver(new URL(url), desiredCapabilities);
+            String url = "http:/" + ServiceFactory.address +":" + "4444" + "/wd/hub";
+            AppiumDriver driver = new AppiumDriver(new URL(url), desiredCapabilities);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
             log.new Important(deviceName+GRAY+" was selected");
             return driver;
