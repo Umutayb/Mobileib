@@ -72,19 +72,19 @@ public class DriverFactory {
                 }
         );
 
-        capabilitiesMap.keySet().iterator().forEachRemaining(field -> log.new Important(field + ":" + capabilitiesMap.get(field)));
+        //capabilitiesMap.keySet().iterator().forEachRemaining(field -> log.new Important(field + ":" + capabilitiesMap.get(field)));
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
             log.new Info("Setting "+ PURPLE + key + GRAY + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
 
-            log.new Important("FIELD: " + Capabilities.Capability.valueOf(key.toUpperCase()));
-            log.new Important("VALUE: " + capabilities.getConfig(capabilities).get(key));
-
-            desiredCapabilities.setCapability(
-                    capabilitiesMap.get(Capabilities.Capability.valueOf(key.toUpperCase()).toString()).toString(),
-                    capabilities.getConfig(capabilities).get(key)
-            );
+            for (String capability: capabilitiesMap.keySet()) {
+                if (key.equalsIgnoreCase(capabilitiesMap.get(capability))) {
+                    desiredCapabilities.setCapability(capability, capabilities.getConfig(capabilities).get(key));
+                    break;
+                }
+                throw new RuntimeException("Capability named '" + key + "' is undefined!");
+            }
         }
         return desiredCapabilities;
     }
