@@ -100,6 +100,7 @@ public class DriverFactory {
                 }
             }
         }
+        printObjectFields(desiredCapabilities);
         return desiredCapabilities;
     }
 
