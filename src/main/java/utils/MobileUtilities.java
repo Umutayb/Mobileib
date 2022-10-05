@@ -26,15 +26,16 @@ import java.util.List;
 @SuppressWarnings("unused")
 public abstract class MobileUtilities extends Driver { //TODO: Write a method which creates a unique css selector for elements
 
-    public TextParser parser = new TextParser();
     Printer log = new Printer(MobileUtilities.class);
+
+    public TextParser parser = new TextParser();
     public StringUtilities strUtils = new StringUtilities();
     public ObjectUtilities objectUtils = new ObjectUtilities();
 
     public enum Color {CYAN, RED, GREEN, YELLOW, PURPLE, GRAY, BLUE}
-    public enum Navigation {BACKWARDS, FORWARDS}
     public enum ElementState {ENABLED, DISPLAYED, SELECTED, DISABLED, UNSELECTED, ABSENT}
     public enum Direction {UP, DOWN, LEFT, RIGHT}
+    public enum Navigation {BACKWARDS, FORWARDS}
     public enum Locator {XPATH, CSS}
 
     public Properties properties;
@@ -446,27 +447,27 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
             case UP:
                 destination = new Point(
                         center.getX(),
-                        center.getY() + driver.manage().window().getSize().getHeight()/2
+                        center.getY() + 3*driver.manage().window().getSize().getHeight()/4
                 );
                 break;
 
             case DOWN:
                 destination = new Point(
                         center.getX(),
-                        center.getY() - driver.manage().window().getSize().getHeight()/2
+                        center.getY() - 3*driver.manage().window().getSize().getHeight()/4
                 );
                 break;
 
             case LEFT:
                 destination = new Point(
-                        center.getX()-driver.manage().window().getSize().getWidth()/2,
+                        center.getX()-3*driver.manage().window().getSize().getWidth()/4,
                         center.getY()
                 );
                 break;
 
             case RIGHT:
                 destination = new Point(
-                        center.getX()+driver.manage().window().getSize().getWidth()/2,
+                        center.getX()+3*driver.manage().window().getSize().getWidth()/4,
                         center.getY()
                 );
                 break;
@@ -486,7 +487,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
                 PointerInput.Origin.viewport(), pointOfDeparture.x, pointOfDeparture.y));
         sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.MIDDLE.asArg()));
         sequence.addAction(new Pause(finger, ofMillis(600)));
-        sequence.addAction(finger.createPointerMove(ofMillis(600),
+        sequence.addAction(finger.createPointerMove(ofMillis(200),
                 PointerInput.Origin.viewport(), pointOfArrival.x, pointOfArrival.y));
         sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.MIDDLE.asArg()));
         driver.perform(singletonList(sequence));
