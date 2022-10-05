@@ -38,6 +38,8 @@ public class Driver extends WebComponent {
 
 		ServiceFactory.startService(address, port);	// Start Appium
 
+		if(!Boolean.parseBoolean(properties.getProperty("detailed-logging")))ServiceFactory.service.clearOutPutStreams();
+
 		assert directory != null;
 		try(FileReader file = new FileReader(directory+"/"+device+".json")) {
 			Capabilities capabilities = new ObjectMapper().readValue(file, Capabilities.class);
