@@ -15,6 +15,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,43 +45,32 @@ public class DriverFactory {
 
     public static DesiredCapabilities getConfig(Capabilities capabilities) {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        ObjectUtilities objUtils = new ObjectUtilities();
 
-        Map<String, Object> capabilitiesMap = objUtils.getFields(MobileCapabilityType.class);
-        Map<String, Object> androidCapabilities = objUtils.getFields(AndroidMobileCapabilityType.class);
-        Map<String, Object> iosCapabilities = objUtils.getFields(IOSMobileCapabilityType.class);
+        Map<String, String> capabilitiesMap = new HashMap<>();
 
-        androidCapabilities.keySet().iterator().forEachRemaining(field ->
-                capabilitiesMap.put(field, androidCapabilities.get(field))
+        Arrays.stream(MobileCapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
+                {
+                    field.setAccessible(true);
+                    try {capabilitiesMap.put(field.getName(), field.get(MobileCapabilityType.class).toString());}
+                    catch (IllegalAccessException e) {throw new RuntimeException(e);}
+                }
         );
 
-        iosCapabilities.keySet().iterator().forEachRemaining(field ->
-                capabilitiesMap.put(field, iosCapabilities.get(field))
+        Arrays.stream(AndroidMobileCapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
+                {
+                    field.setAccessible(true);
+                    try {capabilitiesMap.put(field.getName(), field.get(AndroidMobileCapabilityType.class).toString());}
+                    catch (IllegalAccessException e) {throw new RuntimeException(e);}
+                }
         );
 
-        try {
-            for (Field field :MobileCapabilityType.class.getDeclaredFields()) {
-                field.setAccessible(true);
-                log.new Important("MOBILE " + field.getName() + ":" + field.get(MobileCapabilityType.class));
-            }
-        }
-        catch (IllegalAccessException e) {throw new RuntimeException(e);}
-
-        try {
-            for (Field field :AndroidMobileCapabilityType.class.getDeclaredFields()) {
-                field.setAccessible(true);
-                log.new Important("ANDROID " + field.getName() + ":" + field.get(AndroidMobileCapabilityType.class));
-            }
-        }
-        catch (IllegalAccessException e) {throw new RuntimeException(e);}
-
-        try {
-            for (Field field :IOSMobileCapabilityType.class.getDeclaredFields()) {
-                field.setAccessible(true);
-                log.new Important("IOS " + field.getName() + ":" + field.get(IOSMobileCapabilityType.class));
-            }
-        }
-        catch (IllegalAccessException e) {throw new RuntimeException(e);}
+        Arrays.stream(IOSMobileCapabilityType.class.getDeclaredFields()).iterator().forEachRemaining(field ->
+                {
+                    field.setAccessible(true);
+                    try {capabilitiesMap.put(field.getName(), field.get(IOSMobileCapabilityType.class).toString());}
+                    catch (IllegalAccessException e) {throw new RuntimeException(e);}
+                }
+        );
 
         capabilitiesMap.keySet().iterator().forEachRemaining(field -> log.new Important(field + ":" + capabilitiesMap.get(field)));
 
