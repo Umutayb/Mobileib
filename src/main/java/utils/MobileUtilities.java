@@ -489,7 +489,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
         sequence.addAction(finger.createPointerMove(ofMillis(800),
                 PointerInput.Origin.viewport(), pointOfArrival.x, pointOfArrival.y));
         sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.MIDDLE.asArg()));
-        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*[contains(@class, '')]")));
+        elementIs(driver.findElement(By.xpath("//*[contains(@class, '')]")), ElementState.ENABLED, System.currentTimeMillis());
         driver.perform(singletonList(sequence));
     }
 
