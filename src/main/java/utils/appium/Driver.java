@@ -8,11 +8,11 @@ import models.Capabilities;
 import utils.Printer;
 import utils.PropertiesReader;
 import utils.StringUtilities;
+import utils.SystemUtilities;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.util.Properties;
+
+import static utils.FileUtilities.properties;
 
 @SuppressWarnings("unused")
 public class Driver extends WebComponent {
@@ -23,22 +23,18 @@ public class Driver extends WebComponent {
 
 	PropertiesReader reader = new PropertiesReader("properties-from-pom.properties");
 	StringUtilities strUtils = new StringUtilities();
-	Properties properties = new Properties();
 	Printer log = new Printer(Driver.class);
 
 	public void initialize() {
 		log.new Info("Initializing appium service & driver");
 		String device = reader.getProperty("device");
 
-
-		try {properties.load(new FileReader("src/test/resources/test.properties"));}
-		catch (IOException e) {log.new Warning(e.getMessage());}
 		String directory = properties.getProperty("config");//src/test/resources/configurations
 		if (device==null) device = properties.getProperty("device");
 
 		String address = properties.getProperty("address");
 		int port = Integer.parseInt(properties.getProperty("port"));
-		while (!available(port)) port += 1;
+		while (!new SystemUtilities().portIsAvailable(port)) port += 1;
 
 		ServiceFactory.startService(address, port);	// Start Appium
 
@@ -57,31 +53,5 @@ public class Driver extends WebComponent {
 		ServiceFactory.service.stop();
 	}
 
-	public boolean available(int port) {
-		log.new Info("Checking availability of port " + port);
-		ServerSocket ss = null;
-		DatagramSocket ds = null;
-		try {
-			ss = new ServerSocket(port);
-			ss.setReuseAddress(true);
-			ds = new DatagramSocket(port);
-			ds.setReuseAddress(true);
-			System.out.println("PORT " + port + " IS AVAILABLE");
-			return true;
-		} catch (IOException ignored) {
-		} finally {
-			if (ds != null) {
-				ds.close();
-			}
 
-			if (ss != null) {
-				try {
-					ss.close();
-				} catch (IOException e) {
-					/* should not be thrown */
-				}
-			}
-		}
-		return false;
-	}
 }
