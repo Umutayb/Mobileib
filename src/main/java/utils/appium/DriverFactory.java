@@ -8,6 +8,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import models.Capabilities;
 import utils.ObjectUtilities;
 import utils.Printer;
+import utils.StringUtilities;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.Map;
 
@@ -50,12 +54,16 @@ public class DriverFactory {
                 capabilitiesMap.put(field, iosCapabilities.get(field))
         );
 
+        printModelGetterValues(capabilitiesMap);
+
         for (String key : capabilities.getConfig(capabilities).keySet()) {
 
             log.new Info("Setting "+ PURPLE + key + GRAY + " capability as: \"" + capabilities.getConfig(capabilities).get(key) + "\" " + RESET);
 
-            log.new Important("FIELD:" + Capabilities.Capability.valueOf(key.toUpperCase()));
-            log.new Important("VALUE:" + capabilities.getConfig(capabilities).get(key));
+
+
+            log.new Important("FIELD: " + Capabilities.Capability.valueOf(key.toUpperCase()));
+            log.new Important("VALUE: " + capabilities.getConfig(capabilities).get(key));
 
             desiredCapabilities.setCapability(
                     capabilitiesMap.get(Capabilities.Capability.valueOf(key.toUpperCase()).toString()).toString(),
@@ -63,5 +71,19 @@ public class DriverFactory {
             );
         }
         return desiredCapabilities;
+    }
+
+    public static void printModelGetterValues(Object object){
+        Method[] methods = object.getClass().getDeclaredMethods();
+        StringBuilder output = new StringBuilder();
+        try {
+            for (Method method:methods)
+                if (method.getName().contains("get")){
+                    String fieldName = new StringUtilities().firstLetterCapped(method.getName().replaceAll("get", ""));
+                    output.append("\n").append(fieldName).append(" : ").append(method.invoke(object));
+                }
+            log.new Important("\nFields: " + output);
+        }
+        catch (InvocationTargetException | IllegalAccessException e) {throw new RuntimeException(e);}
     }
 }
