@@ -81,22 +81,21 @@ public class DriverFactory {
         //capabilitiesMap.keySet().iterator().forEachRemaining(field -> log.new Important(field + ":" + capabilitiesMap.get(field)));
 
         for (String key : capabilities.getConfig(capabilities).keySet()) {
-
             log.new Info("Setting "+
                     PURPLE + key + GRAY +
                     " capability as: \"" +
                     PURPLE + capabilities.getConfig(capabilities).get(key) + GRAY +
                     "\" " + RESET
             );
-
-            for (String capability: capabilitiesMap.keySet()) {
-                if (key.equalsIgnoreCase(capabilitiesMap.get(capability))) {
-                    log.new Warning("CAPABILITY: " +capability);
-                    desiredCapabilities.setCapability(capabilitiesMap.get(capability), capabilities.getConfig(capabilities).get(key));
+            desiredCapabilities.setCapability(key, capabilities.getConfig(capabilities).get(key));
+/*
+            for (String capability: capabilitiesMap.values()) {
+                if (key.equalsIgnoreCase(capability)) {
+                    desiredCapabilities.setCapability(capability, capabilities.getConfig(capabilities).get(key));
                     log.new Success(key + " is set as " + capabilities.getConfig(capabilities).get(key));
                     break;
                 }
-            }
+            }*/
         }
         printObjectFields(desiredCapabilities);
         return desiredCapabilities;
