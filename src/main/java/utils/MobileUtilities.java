@@ -304,7 +304,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     }
 
     //This method clicks a button with a certain text on it
-    public void clickButtonWithText(String buttonText, Boolean scroll){clickElement(getElementByText(buttonText), scroll);}
+    public void clickButtonWithText(String buttonText, Boolean scroll){clickElement(getElementByText(buttonText, System.currentTimeMillis()), scroll);}
 
     //This method clears an input field /w style
     public WebElement clearInputField(WebElement element){
@@ -314,12 +314,24 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
     }
 
     //This method returns an element with a certain text on it
-    public WebElement getElementByText(String elementText){
+    public WebElement getElementByText(String elementText, long initialTime){
+        driver.manage().timeouts().implicitlyWait(ofMillis(500));
+        WebElement element;
         try {
-            return driver.findElement(By.xpath("//*[text()='" +elementText+ "']"));
+            element = driver.findElement(By.xpath("//*[text()='" +elementText+ "']"));
+            if (!element.isEnabled()){throw new InvalidElementStateException("Element is not enabled!");}
+            else {
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+                return element;
+            }
         }
-        catch (ElementNotFoundException | NoSuchElementException exception){
-            throw new NoSuchElementException(GRAY+exception.getMessage()+RESET);
+        catch (WebDriverException exception){
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+            if (!(System.currentTimeMillis() - initialTime>15000)) {
+                log.new Warning("Recursion! (" + exception.getClass().getName() + ")");
+                return getElementByText(elementText, initialTime);
+            }
+            else throw exception;
         }
     }
 
