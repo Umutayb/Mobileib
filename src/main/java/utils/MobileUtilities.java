@@ -485,8 +485,8 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
         sequence.addAction(finger.createPointerMove(Duration.ofMillis(0),
                 PointerInput.Origin.viewport(), pointOfDeparture.x, pointOfDeparture.y));
         sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.MIDDLE.asArg()));
-        sequence.addAction(new Pause(finger, ofMillis(600)));
-        sequence.addAction(finger.createPointerMove(ofMillis(800),
+        sequence.addAction(new Pause(finger, ofMillis(750)));
+        sequence.addAction(finger.createPointerMove(ofMillis(250),
                 PointerInput.Origin.viewport(), pointOfArrival.x, pointOfArrival.y));
         sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.MIDDLE.asArg()));
         performSequence(sequence, System.currentTimeMillis());
