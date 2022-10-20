@@ -38,7 +38,7 @@ public class XPathUtilities {
                     break;
 
                 case "text":
-                    xPath = "//*[contains(text(), '" +locatorID+ "')]";
+                    xPath = "//*[contains(text(), 'NEXT')]";
                     break;
 
                 case "name":
