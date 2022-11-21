@@ -9,7 +9,7 @@ import static resources.Colors.*;
 public class ServiceFactory {
     static Printer log = new Printer(ServiceFactory.class);
 
-    static AppiumDriverLocalService service;
+    public static AppiumDriverLocalService service;
     static String address;
     static Integer port;
 

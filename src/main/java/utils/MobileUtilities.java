@@ -1,12 +1,14 @@
 package utils;
 
 import com.github.webdriverextensions.WebDriverExtensionFieldDecorator;
-import context.TestStore;
+import context.ContextStore;
 import io.appium.java_client.AppiumDriver;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 import com.gargoylesoftware.htmlunit.*;
 import java.time.Duration;
@@ -26,7 +28,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public abstract class MobileUtilities extends Driver { //TODO: Write a method which creates a unique css selector for elements
 
-    Printer log = new Printer(MobileUtilities.class);
+    public Printer log = new Printer(this.getClass());
 
     public TextParser parser = new TextParser();
     public StringUtilities strUtils = new StringUtilities();
@@ -40,9 +42,12 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
 
     public Properties properties;
 
+    public long elementTimeout;
+
     public MobileUtilities(){
         PageFactory.initElements(new WebDriverExtensionFieldDecorator(driver), this);
         properties = FileUtilities.properties;
+        elementTimeout = Long.parseLong(properties.getProperty("element-timeout", "15000"));
     }
 
     public String getAttribute(WebElement element, String attribute){return element.getAttribute(attribute);}
@@ -117,54 +122,198 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
 
     //This method clicks an element after waiting sit and scrolling it to the center of the view
     public void clickElement(WebElement element, Boolean scroll){
-        waitAndClickIfElementIsClickable(element, scroll, System.currentTimeMillis());
+        long initialTime = System.currentTimeMillis();
+        WebDriverException caughtException = null;
+        boolean timeout;
+        int counter = 0;
+        waitUntilElementIs(element, ElementState.ENABLED, false);
+        do {
+            timeout = System.currentTimeMillis()-initialTime > elementTimeout;
+            try {
+                if (scroll) centerElement(element).click();
+                else element.click();
+                return;
+            }
+            catch (WebDriverException webDriverException){
+                if (counter == 0) {
+                    log.new Warning("Iterating... (" + webDriverException.getClass().getName() + ")");
+                    caughtException = webDriverException;
+                }
+                else if (!webDriverException.getClass().getName().equals(caughtException.getClass().getName())){
+                    log.new Warning("Iterating... (" + webDriverException.getClass().getName() + ")");
+                    caughtException = webDriverException;
+                }
+                counter++;
+            }
+        }
+        while (!timeout);
+        if (counter > 0) log.new Warning("Iterated " + counter + " time(s)!");
+        log.new Warning(caughtException.getMessage());
+        throw new RuntimeException(caughtException);
     }
 
-    public Boolean elementIs(WebElement element, ElementState state, long initialTime){
-        driver.manage().timeouts().implicitlyWait(ofMillis(500));
-        try {
-            boolean condition;
-            switch (state){
-                case ENABLED:
-                    condition = element.isEnabled();
-                    break;
+    public void clearFillInput(WebElement inputElement, String inputText, @NotNull Boolean scroll, Boolean verify){
+        // This method clears the input field before filling it
+        if (scroll) clearInputField(centerElement(waitUntilElementIs(inputElement, ElementState.DISPLAYED, false)))
+                .sendKeys(inputText);
+        else clearInputField(waitUntilElementIs(inputElement, ElementState.DISPLAYED, false))
+                .sendKeys(inputText);
 
-                case DISPLAYED:
-                    condition = element.isDisplayed();
-                    break;
-
-                case SELECTED:
-                    condition = element.isSelected();
-                    break;
-
-                case DISABLED:
-                    condition = !element.isEnabled();
-                    break;
-
-                case UNSELECTED:
-                    condition = !element.isSelected();
-                    break;
-
-                case ABSENT:
-                    condition = !element.isDisplayed();
-                    break;
-
-                default:
-                    throw new EnumConstantNotPresentException(ElementState.class, state.name());
-            }
-            if (!condition){throw new InvalidElementStateException("Element is not displayed!");}
-            else return true;
-        }
-        catch (WebDriverException exception){
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
-            if (!(System.currentTimeMillis()-initialTime>15000)) {
-                log.new Warning("Recursion! (" + exception.getClass().getName() + ")");
-                return elementIs(element, state, initialTime);
-            }
-            else return false;
-        }
+        if (verify) Assert.assertEquals(inputText, inputElement.getAttribute("value"));
     }
 
+    public WebElement waitUntilElementIs(WebElement element, ElementState state, @NotNull Boolean strict){
+        if (strict) Assert.assertTrue("Element is not in " + state.name() + " state!", elementIs(element, state));
+        else elementIs(element, state);
+        return element;
+    }
+
+    public Boolean elementIs(WebElement element, @NotNull ElementState state){
+        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        long initialTime = System.currentTimeMillis();
+        String caughtException = null;
+        boolean timeout;
+        boolean condition = false;
+        boolean negativeCheck = false;
+        int counter = 0;
+        do {
+            timeout = System.currentTimeMillis()-initialTime > elementTimeout;
+            if (condition) return true;
+            else if (counter > 1 && negativeCheck) return true;
+            try {
+                switch (state){
+                    case ENABLED:
+                        negativeCheck = false;
+                        condition = element.isEnabled();
+                        break;
+
+                    case DISPLAYED:
+                        negativeCheck = false;
+                        condition = element.isDisplayed();
+                        break;
+
+                    case SELECTED:
+                        negativeCheck = false;
+                        condition = element.isSelected();
+                        break;
+
+                    case DISABLED:
+                        negativeCheck = true;
+                        condition = !element.isEnabled();
+                        break;
+
+                    case UNSELECTED:
+                        negativeCheck = true;
+                        condition = !element.isSelected();
+                        break;
+
+                    case ABSENT:
+                        negativeCheck = true;
+                        condition = !element.isDisplayed();
+                        break;
+
+                    default: throw new EnumConstantNotPresentException(ElementState.class, state.name());
+                }
+            }
+            catch (WebDriverException webDriverException){
+                if (counter == 0) {
+                    log.new Warning("Iterating... (" + webDriverException.getClass().getName() + ")");
+                    caughtException = webDriverException.getClass().getName();
+                }
+                else if (!webDriverException.getClass().getName().equals(caughtException)){
+                    log.new Warning("Iterating... (" + webDriverException.getClass().getName() + ")");
+                    caughtException = webDriverException.getClass().getName();
+                }
+                counter++;
+            }
+        }
+        while (!timeout);
+        if (counter > 0) log.new Warning("Iterated " + counter + " time(s)!");
+        return false;
+    }
+
+    public WebElement hoverOver(WebElement element){
+        long initialTime = System.currentTimeMillis();
+        Actions actions = new Actions(driver);
+        String caughtException = null;
+        boolean timeout;
+        int counter = 0;
+        do {
+            try {
+                centerElement(element);
+                actions.moveToElement(element).build().perform();
+                break;
+            }
+            catch (WebDriverException webDriverException){
+                if (counter == 0) {
+                    log.new Warning("Iterating... (" + webDriverException.getClass().getName() + ")");
+                    caughtException = webDriverException.getClass().getName();
+                    counter++;
+                }
+                else if (!webDriverException.getClass().getName().equals(caughtException)){
+                    log.new Warning("Iterating... (" + webDriverException.getClass().getName() + ")");
+                    caughtException = webDriverException.getClass().getName();
+                    counter++;
+                }
+                timeout = System.currentTimeMillis()-initialTime > elementTimeout;
+            }
+        }
+        while (timeout);
+        return element;
+    }
+
+    public void loopAndClick(List<WebElement> list, String buttonName, Boolean scroll){
+        clickElement(acquireNamedElementAmongst(list,buttonName), scroll);
+    }
+
+    public <T> T acquireNamedComponentAmongst(List<T> items, String selectionName){
+        log.new Info("Acquiring component called " + highlighted(Color.BLUE, selectionName));
+        boolean timeout = false;
+        long initialTime = System.currentTimeMillis();
+        while (!timeout){
+            for (T selection : items) {
+                String text = ((WebElement) selection).getText();
+                if (text.equalsIgnoreCase(selectionName) || text.contains(selectionName)) return selection;
+            }
+            if (System.currentTimeMillis() - initialTime > elementTimeout) timeout = true;
+        }
+        throw new NoSuchElementException("No component with text/name '" + selectionName + "' could be found!");
+    }
+
+    public WebElement acquireNamedElementAmongst(List<WebElement> items, String selectionName){
+        log.new Info("Acquiring element called " + highlighted(Color.BLUE, selectionName));
+        boolean timeout = false;
+        long initialTime = System.currentTimeMillis();
+        while (!timeout){
+            for (WebElement selection : items) {
+                String name = selection.getAccessibleName();
+                String text = selection.getText();
+                if (    name.equalsIgnoreCase(selectionName) ||
+                        name.contains(selectionName)         ||
+                        text.equalsIgnoreCase(selectionName) ||
+                        text.contains(selectionName)
+                ) return selection;
+            }
+            if (System.currentTimeMillis() - initialTime > elementTimeout) timeout = true;
+        }
+        throw new NoSuchElementException("No element with text/name '" + selectionName + "' could be found!");
+    }
+
+    public WebElement acquireElementUsingAttributeAmongst(List<WebElement> items, String attributeName, String attributeValue){
+        log.new Info("Acquiring element called " + highlighted(Color.BLUE, attributeValue) + " using its " + highlighted(Color.BLUE, attributeName) + " attribute");
+        boolean condition = true;
+        long initialTime = System.currentTimeMillis();
+        while (condition){
+            for (WebElement selection : items) {
+                String attribute = selection.getAttribute(attributeName);
+                if (attribute.equalsIgnoreCase(attributeValue) || attribute.contains(attributeValue)) return selection;
+            }
+            if (System.currentTimeMillis() - initialTime > elementTimeout) condition = false;
+        }
+        throw new NoSuchElementException("No element with the attributes '" + attributeName + " : " + attributeValue + "' could be found!");
+    }
+
+    @Deprecated(since = "0.5.5", forRemoval = true)
     public WebElement waitUntilElementIsVisible(WebElement element, long initialTime){
         driver.manage().timeouts().implicitlyWait(ofMillis(500));
         try {if (!element.isDisplayed()){throw new InvalidElementStateException("Element is not displayed!");}}
@@ -179,6 +328,64 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
         return element;
     }
 
+    public String switchWindowHandle(String handle){
+        String parentWindowHandle = driver.getWindowHandle();
+        if (handle == null)
+            for (String windowHandle:driver.getWindowHandles()) {
+                if (!windowHandle.equalsIgnoreCase(parentWindowHandle))
+                    driver = (AppiumDriver) driver.switchTo().window((windowHandle));
+            }
+        else driver = (AppiumDriver) driver.switchTo().window(handle);
+        return parentWindowHandle;
+    }
+
+    public void clickButtonWithText(String buttonText, Boolean scroll){clickElement(getElementByText(buttonText), scroll);}
+
+    public WebElement clearInputField(@NotNull WebElement element){
+        int textLength = element.getAttribute("value").length();
+        for(int i = 0; i < textLength; i++){element.sendKeys(Keys.BACK_SPACE);}
+        return element;
+    }
+
+    public WebElement getElementByText(String elementText){
+        try {
+            return driver.findElement(By.xpath("//*[text()='" +elementText+ "']"));
+        }
+        catch (ElementNotFoundException | NoSuchElementException exception){
+            throw new NoSuchElementException(GRAY+exception.getMessage()+RESET);
+        }
+    }
+
+    public WebElement getElementContainingText(String elementText){
+        try {
+            return driver.findElement(By.xpath("//*[contains(text(), '" +elementText+ "')]"));
+        }
+        catch (ElementNotFoundException | NoSuchElementException exception){
+            throw new NoSuchElementException(GRAY+exception.getMessage()+RESET);
+        }
+    }
+
+    public void clickAtAnOffset(WebElement element, int xOffset, int yOffset, boolean scroll){
+
+        if (scroll) centerElement(element);
+
+        Actions builder = new org.openqa.selenium.interactions.Actions(driver);
+        builder
+                .moveToElement(element, xOffset, yOffset)
+                .click()
+                .build()
+                .perform();
+    }
+
+    public void uploadFile(@NotNull WebElement fileUploadInput, String directory, String fileName){fileUploadInput.sendKeys(directory+"/"+fileName);}
+
+    public void waitFor(double seconds){
+        if (seconds > 1) log.new Info("Waiting for "+BLUE+seconds+GRAY+" seconds");
+        try {Thread.sleep((long) (seconds* 1000L));}
+        catch (InterruptedException exception){Assert.fail(GRAY+exception.getLocalizedMessage()+RESET);}
+    }
+
+    @Deprecated(since = "0.5.5", forRemoval = true)
     public void waitAndClickIfElementIsClickable(WebElement element, Boolean scroll, long initialTime){
         driver.manage().timeouts().implicitlyWait(ofMillis(500));
         try {
@@ -199,20 +406,6 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
         }
     }
 
-    //This method is for filling an input field, it waits for the element, scrolls to it, clears it and then fills it
-    public void clearFillInput(WebElement inputElement, String inputText, Boolean scroll, Boolean verify){
-        try {
-            // This method clears the input field before filling it
-            if (scroll)
-                clearInputField(centerElement(waitUntilElementIsVisible(inputElement, System.currentTimeMillis()))).sendKeys(inputText);
-            else
-                clearInputField(waitUntilElementIsVisible(inputElement, System.currentTimeMillis())).sendKeys(inputText);
-
-            if (verify) Assert.assertEquals(inputElement.getAttribute("value"), inputText);
-        }
-        catch (ElementNotFoundException e){Assert.fail(GRAY+e.getMessage()+RESET);}
-    }
-
     @SuppressWarnings("UnusedReturnValue")
     public WebElement hoverOver(WebElement element, Long initialTime){
         if (System.currentTimeMillis()-initialTime > 10000) return null;
@@ -221,10 +414,6 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
         try {actions.moveToElement(element).build().perform();}
         catch (WebDriverException ignored) {hoverOver(element,initialTime);}
         return element;
-    }
-
-    public void loopAndClick(List<WebElement> list, String buttonName, Boolean scroll){
-        clickElement(acquireNamedElementAmongst(list,buttonName, System.currentTimeMillis()), scroll);
     }
 
     public WebElement acquireNamedElementAmongst(List<WebElement> items, String selectionName, long initialTime){
@@ -292,27 +481,6 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
         }
     }
 
-    public String switchWindowHandle(String handle){
-        String parentWindowHandle = driver.getWindowHandle();
-        if (handle == null)
-            for (String windowHandle:driver.getWindowHandles()) {
-                if (!windowHandle.equalsIgnoreCase(parentWindowHandle))
-                    driver = (AppiumDriver) driver.switchTo().window((windowHandle));
-            }
-        else driver = (AppiumDriver) driver.switchTo().window(handle);
-        return parentWindowHandle;
-    }
-
-    //This method clicks a button with a certain text on it
-    public void clickButtonWithText(String buttonText, Boolean scroll){clickElement(getElementByText(buttonText, System.currentTimeMillis()), scroll);}
-
-    //This method clears an input field /w style
-    public WebElement clearInputField(WebElement element){
-        int textLength = element.getAttribute("value").length();
-        for(int i = 0; i < textLength; i++){element.sendKeys(Keys.BACK_SPACE);}
-        return element;
-    }
-
     //This method returns an element with a certain text on it
     public WebElement getElementByText(String elementText, long initialTime){
         driver.manage().timeouts().implicitlyWait(ofMillis(500));
@@ -332,16 +500,6 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
                 return getElementByText(elementText, initialTime);
             }
             else throw exception;
-        }
-    }
-
-    //This method returns an element with a certain text on it
-    public WebElement getElementContainingText(String elementText){
-        try {
-            return driver.findElement(By.xpath("//*[contains(text(), '" +elementText+ "')]"));
-        }
-        catch (ElementNotFoundException | NoSuchElementException exception){
-            throw new NoSuchElementException(GRAY+exception.getMessage()+RESET);
         }
     }
 
@@ -407,16 +565,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
 
     public Alert getAlert(){return driver.switchTo().alert();}
 
-    public void uploadFile(WebElement fileUploadInput, String directory, String fileName){fileUploadInput.sendKeys(directory+"/"+fileName);}
-
     public String combineKeys(Keys key1, Keys key2){return Keys.chord(key1,key2);}
-
-    //This method makes the thread wait for a certain while
-    public void waitFor(double seconds){
-        if (seconds > 1) log.new Info("Waiting for "+BLUE+seconds+GRAY+" seconds");
-        try {Thread.sleep((long) (seconds* 1000L));}
-        catch (InterruptedException exception){Assert.fail(GRAY+exception.getLocalizedMessage()+RESET);}
-    }
 
     //This method scrolls an element to the center of the view
     //This method scrolls an element to the center of the view
@@ -697,7 +846,7 @@ public abstract class MobileUtilities extends Driver { //TODO: Write a method wh
 
     public String contextCheck(String input){
         if (input.contains("CONTEXT-"))
-            input = TestStore.get(new TextParser().parse("CONTEXT-", null, input)).toString();
+            input = ContextStore.get(new TextParser().parse("CONTEXT-", null, input)).toString();
         if (input.contains("RANDOM-")){
             boolean useLetters = input.contains("LETTER");
             boolean useNumbers = input.contains("NUMBER");

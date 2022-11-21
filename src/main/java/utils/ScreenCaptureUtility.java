@@ -1,5 +1,6 @@
 package utils;
 
+import io.appium.java_client.AppiumDriver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -13,7 +14,7 @@ public class ScreenCaptureUtility {
     Printer log = new Printer(ScreenCaptureUtility.class);
     NumericUtilities numeric = new NumericUtilities();
 
-    public File captureScreen(String name, RemoteWebDriver driver) {
+    public File captureScreen(String name, AppiumDriver driver) {
         try {
             log.new Info("Capturing page...");
 

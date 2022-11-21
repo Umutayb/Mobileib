@@ -18,12 +18,8 @@ public class Driver extends WebComponent {
 	StringUtilities strUtils = new StringUtilities();
 	Printer log = new Printer(Driver.class);
 
-	public void initialize() {
-		log.new Info("Initializing appium service & driver");
-		String device = reader.getProperty("device");
-		if (device==null) device = properties.getProperty("device");
-
-		String directory = properties.getProperty("config");//src/test/resources/configurations
+	public static void startService(){
+		new Printer(Driver.class).new Info("Initializing appium service");
 
 		String address = properties.getProperty("address");
 		int port = Integer.parseInt(properties.getProperty("port"));
@@ -31,7 +27,15 @@ public class Driver extends WebComponent {
 
 		ServiceFactory.startService(address, port);	// Start Appium
 
-		if(!Boolean.parseBoolean(properties.getProperty("detailed-logging")))ServiceFactory.service.clearOutPutStreams();
+		if(!Boolean.parseBoolean(properties.getProperty("detailed-logging"))) ServiceFactory.service.clearOutPutStreams();
+	}
+
+	public void initialize() {
+		log.new Info("Initializing appium driver");
+		String device = reader.getProperty("device");
+		if (device==null) device = properties.getProperty("device");
+
+		String directory = properties.getProperty("config");//src/test/resources/configurations
 
 		JSONObject json = DriverFactory.jsonUtils.parseJSONFile(directory+"/"+device+".json");
 		driver = DriverFactory.getDriver(strUtils.firstLetterCapped(device), json);
@@ -41,6 +45,5 @@ public class Driver extends WebComponent {
 		log.new Info("Finalizing driver...");
 		try {driver.quit();}
 		catch (Exception ignored){}
-		finally {ServiceFactory.service.stop();}
 	}
 }
