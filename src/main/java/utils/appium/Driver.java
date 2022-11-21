@@ -5,6 +5,8 @@ import io.appium.java_client.AppiumDriver;
 import org.json.simple.JSONObject;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.*;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 import static utils.FileUtilities.properties;
 
@@ -23,7 +25,11 @@ public class Driver extends WebComponent {
 
 		String address = properties.getProperty("address");
 		int port = Integer.parseInt(properties.getProperty("port"));
-		while (!new SystemUtilities().portIsAvailable(port)) port += 1;
+
+		if (!new SystemUtilities().portIsAvailable(port)){
+			try (ServerSocket socket = new ServerSocket(0)) {port = socket.getLocalPort();}
+			catch (IOException e) {throw new RuntimeException(e);}
+		}
 
 		ServiceFactory.startService(address, port);	// Start Appium
 
